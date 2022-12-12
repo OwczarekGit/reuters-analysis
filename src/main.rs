@@ -1,30 +1,83 @@
 extern crate core;
 
+use std::borrow::Borrow;
 use std::fs;
 use std::fs::DirEntry;
 use std::path::Path;
 use minidom::Element;
+use regex::Regex;
 
 fn main() {
     let sgm_files = get_files_with_extension("reuters", "sgm");
+    let mut all_reuters: Vec<Reuters> = vec![];
     sgm_files.iter().for_each(|file| {
         if let Some(content) = read_sgm_file_content(file) {
-            let root: Element = content.parse().unwrap();
-            println!("{}", root.text());
+            if let Ok(root) = content.parse::<Element>(){
+                root.children().for_each(|child|{
+                    if child.is("REUTERS", "") {
+                        all_reuters.push(Reuters::new(&child));
+                    }
+                });
+            }
         }
     });
+
+    for reuter in all_reuters {
+        println!("{:?}", reuter);
+    }
+}
+
+#[derive(Debug)]
+struct Reuters{
+    topics: Vec<String>,
+    places: Vec<String>,
+    body: String
+}
+
+impl Reuters{
+    pub fn new(element: &Element) -> Self{
+        let topics = Reuters::get_child(&element, "TOPICS");
+        let places = Reuters::get_child(&element, "PLACES");
+        let body = Reuters::get_body(&element);
+
+        Self{ topics, places, body }
+    }
+
+    fn get_body(element: &Element) -> String {
+        let mut ret_val = String::new();
+        element.children().for_each(|child|{
+            if child.is("TEXT","") {
+                child.children().for_each(|text_child|{
+                    if text_child.is("BODY","") {
+                        ret_val = text_child.text().trim().to_string();
+                    }
+                })
+            }
+        });
+        ret_val
+    }
+
+    fn get_child(element: &Element, node: &str) -> Vec<String>{
+        let mut items = vec![];
+        element.children().for_each(|child| {
+            if child.is(node, "") {
+                child.children().for_each(|place| {
+                    items.push(place.text().trim().to_string());
+                });
+            }
+        });
+        items
+    }
 }
 
 fn read_sgm_file_content(file: &DirEntry) -> Option<String> {
     if let Some(content) = read_file_content(file){
-        let mut combined: String = String::from("<ROOT xmlns=\"\">");
-        combined.push_str(&content
-            .replace("<!DOCTYPE lewis SYSTEM \"lewis.dtd\">","")
-            .replace("&", "&amp;")
-            .replace("\"", "&quot;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;"));
-        combined.push_str("</ROOT>");
+        let regex = Regex::new("&#.*?;").unwrap();
+        let mut combined: String = String::from("<articles xmlns=\"\">");
+        let removed_doctype = &content.replace("<!DOCTYPE lewis SYSTEM \"lewis.dtd\">","");
+        let fixed = regex.replace_all(removed_doctype,"");
+        combined.push_str(fixed.borrow());
+        combined.push_str("</articles>");
         return Some(combined);
     }
     None

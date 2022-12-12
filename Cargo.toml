@@ -6,4 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-minidom = "0.15.0"
+minidom = "*"
+regex = "1.7.0"
+
+[target.release]
+opt-level=3
