@@ -6,6 +6,7 @@ use std::fs::DirEntry;
 use std::path::Path;
 use minidom::Element;
 use regex::Regex;
+use serde::{Deserialize, Serialize};
 
 fn main() {
     let sgm_files = get_files_with_extension("reuters", "sgm");
@@ -24,10 +25,12 @@ fn main() {
 
     for reuter in all_reuters {
         println!("{:?}", reuter);
+        // println!("{}", serde_json::to_string(&reuter).unwrap());
+        // println!("{}", serde_json::to_string(&all_reuters).unwrap());
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 struct Reuters{
     topics: Vec<String>,
     places: Vec<String>,
