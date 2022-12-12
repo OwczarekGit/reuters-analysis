@@ -31,30 +31,35 @@ fn main() {
 struct Reuters{
     topics: Vec<String>,
     places: Vec<String>,
-    body: String
+    title: String,
+    body:  String
 }
 
 impl Reuters{
     pub fn new(element: &Element) -> Self{
         let topics = Reuters::get_child(&element, "TOPICS");
         let places = Reuters::get_child(&element, "PLACES");
-        let body = Reuters::get_body(&element);
+        let (title, body) = Reuters::get_text_details(&element);
 
-        Self{ topics, places, body }
+        Self{ topics, places, title, body }
     }
 
-    fn get_body(element: &Element) -> String {
-        let mut ret_val = String::new();
+    fn get_text_details(element: &Element) -> (String, String) {
+        let mut title_val = String::new();
+        let mut body_val = String::new();
         element.children().for_each(|child|{
             if child.is("TEXT","") {
                 child.children().for_each(|text_child|{
                     if text_child.is("BODY","") {
-                        ret_val = text_child.text().trim().to_string();
+                        body_val = text_child.text().trim().to_string();
+                    } else if text_child.is("TITLE","") {
+                        title_val = text_child.text().trim().to_string();
                     }
                 })
             }
         });
-        ret_val
+
+        (title_val, body_val)
     }
 
     fn get_child(element: &Element, node: &str) -> Vec<String>{
