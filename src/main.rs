@@ -7,6 +7,7 @@ use std::path::Path;
 use minidom::Element;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
+use crate::ElementType::{BODY, OTHER, PLACES, TOPICS};
 
 fn main() {
     let sgm_files = get_files_with_extension("reuters", "sgm");
@@ -23,10 +24,65 @@ fn main() {
         }
     });
 
-    for reuter in all_reuters {
-        println!("{:?}", reuter);
+    // for reuter in all_reuters {
+        // println!("{:?}", reuter);
         // println!("{}", serde_json::to_string(&reuter).unwrap());
-        // println!("{}", serde_json::to_string(&all_reuters).unwrap());
+        println!("{}", serde_json::to_string(&all_reuters).unwrap());
+    // }
+}
+
+macro_rules! clean {
+    ($s:expr) => {
+        $s.trim().to_string()
+    };
+}
+
+enum ElementType{
+    TOPICS(Vec<String>),
+    PLACES(Vec<String>),
+    BODY(String, String),
+    OTHER,
+}
+
+impl ElementType {
+    pub fn new(element: &Element) -> Self {
+        match element.name() {
+            "TOPICS" => Self::get_topics(element),
+            "PLACES" => Self::get_places(element),
+            "TEXT" => Self::get_text_details(element),
+            _ => OTHER,
+        }
+    }
+
+    fn get_topics(element: &Element) -> ElementType {
+        let mut items = vec![];
+        for child in element.children() {
+            items.push(clean!(child.text()));
+        }
+        TOPICS(items)
+    }
+
+    fn get_places(element: &Element) -> ElementType {
+        let mut items = vec![];
+        for child in element.children() {
+            items.push(clean!(child.text()));
+        }
+        PLACES(items)
+    }
+
+    fn get_text_details(element: &Element) -> ElementType {
+        let mut title = String::new();
+        let mut body = String::new();
+
+        for child in element.children() {
+            if child.is("TITLE","") {
+                title = clean!(child.text());
+            } else if child.is("BODY","") {
+                body = clean!(child.text());
+            }
+        }
+
+        BODY(title, body)
     }
 }
 
@@ -39,42 +95,23 @@ struct Reuters{
 }
 
 impl Reuters{
-    pub fn new(element: &Element) -> Self{
-        let topics = Reuters::get_child(&element, "TOPICS");
-        let places = Reuters::get_child(&element, "PLACES");
-        let (title, body) = Reuters::get_text_details(&element);
+    pub fn new(element: &Element) -> Self {
+
+        let mut topics = vec![];
+        let mut places = vec![];
+        let mut title = String::new();
+        let mut body = String::new();
+
+        for child in element.children() {
+            match ElementType::new(child){
+                TOPICS(t) => topics = t,
+                PLACES(p) => places = p,
+                BODY(t,b) => (title, body) = (t, b),
+                OTHER  => {},
+            }
+        }
 
         Self{ topics, places, title, body }
-    }
-
-    fn get_text_details(element: &Element) -> (String, String) {
-        let mut title_val = String::new();
-        let mut body_val = String::new();
-        element.children().for_each(|child|{
-            if child.is("TEXT","") {
-                child.children().for_each(|text_child|{
-                    if text_child.is("BODY","") {
-                        body_val = text_child.text().trim().to_string();
-                    } else if text_child.is("TITLE","") {
-                        title_val = text_child.text().trim().to_string();
-                    }
-                })
-            }
-        });
-
-        (title_val, body_val)
-    }
-
-    fn get_child(element: &Element, node: &str) -> Vec<String>{
-        let mut items = vec![];
-        element.children().for_each(|child| {
-            if child.is(node, "") {
-                child.children().for_each(|place| {
-                    items.push(place.text().trim().to_string());
-                });
-            }
-        });
-        items
     }
 }
 
