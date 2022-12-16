@@ -7,7 +7,7 @@ use std::path::Path;
 use minidom::Element;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
-use crate::ElementType::{BODY, OTHER, PLACES, TOPICS};
+use crate::ElementType::{BODY, DATE, EXCHANGES, ORGS, OTHER, PEOPLE, PLACES, TOPICS, UNKNOWN};
 
 fn main() {
     let sgm_files = get_files_with_extension("reuters", "sgm");
@@ -24,40 +24,76 @@ fn main() {
         }
     });
 
-    // for reuter in all_reuters {
-        // println!("{:?}", reuter);
-        // println!("{}", serde_json::to_string(&reuter).unwrap());
-        println!("{}", serde_json::to_string(&all_reuters).unwrap());
-    // }
+    // println!("{}",all_reuters.len());
+    println!("{}", serde_json::to_string_pretty(&all_reuters).unwrap());
 }
 
-macro_rules! clean {
-    ($s:expr) => {
-        $s.trim().to_string()
-    };
+trait Cleaner {
+    fn clean(&self) -> String;
+}
+
+impl Cleaner for String {
+    fn clean(&self) -> String {
+        self.trim().to_string()
+    }
 }
 
 enum ElementType{
+    DATE(String),
     TOPICS(Vec<String>),
     PLACES(Vec<String>),
-    BODY(String, String),
+    PEOPLE(Vec<String>),
+    ORGS(Vec<String>),
+    EXCHANGES(Vec<String>),
+    // COMPANIES(Vec<String>), Skip - always empty
+    UNKNOWN(String),
+    BODY(String, String, String),
     OTHER,
 }
 
 impl ElementType {
     pub fn new(element: &Element) -> Self {
         match element.name() {
+            "DATE" => DATE(element.text().clean()),
             "TOPICS" => Self::get_topics(element),
             "PLACES" => Self::get_places(element),
+            "PEOPLE" => Self::get_people(element),
+            "ORGS" => Self::get_orgs(element),
+            "EXCHANGES" => Self::get_exchanges(element),
+            "UNKNOWN" => UNKNOWN(element.text().clean()),
             "TEXT" => Self::get_text_details(element),
             _ => OTHER,
         }
     }
 
+    fn get_exchanges(element: &Element) -> ElementType {
+        let mut items = vec![];
+        for child in element.children() {
+            items.push(child.text().clean());
+        }
+        EXCHANGES(items)
+    }
+
+    fn get_orgs(element: &Element) -> ElementType {
+        let mut items = vec![];
+        for child in element.children() {
+            items.push(child.text().clean());
+        }
+        ORGS(items)
+    }
+
+    fn get_people(element: &Element) -> ElementType {
+        let mut items = vec![];
+        for child in element.children() {
+            items.push(child.text().clean());
+        }
+        PEOPLE(items)
+    }
+
     fn get_topics(element: &Element) -> ElementType {
         let mut items = vec![];
         for child in element.children() {
-            items.push(clean!(child.text()));
+            items.push(child.text().clean());
         }
         TOPICS(items)
     }
@@ -65,32 +101,41 @@ impl ElementType {
     fn get_places(element: &Element) -> ElementType {
         let mut items = vec![];
         for child in element.children() {
-            items.push(clean!(child.text()));
+            items.push(child.text().clean());
         }
         PLACES(items)
     }
 
     fn get_text_details(element: &Element) -> ElementType {
         let mut title = String::new();
+        let mut dateline = String::new();
         let mut body = String::new();
 
         for child in element.children() {
             if child.is("TITLE","") {
-                title = clean!(child.text());
+                title = child.text().clean();
+            } else if child.is("DATELINE", "") {
+                dateline = child.text().clean();
             } else if child.is("BODY","") {
-                body = clean!(child.text());
+                body = child.text().clean();
             }
         }
 
-        BODY(title, body)
+        BODY(title, body, dateline)
     }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Reuters{
+    date: String,
     topics: Vec<String>,
     places: Vec<String>,
+    people: Vec<String>,
+    orgs: Vec<String>,
+    exchanges: Vec<String>,
+    unknown: String,
     title: String,
+    dateline: String,
     body:  String
 }
 
@@ -98,20 +143,31 @@ impl Reuters{
     pub fn new(element: &Element) -> Self {
 
         let mut topics = vec![];
+        let mut date = String::new();
         let mut places = vec![];
+        let mut people = vec![];
+        let mut orgs = vec![];
+        let mut exchanges = vec![];
+        let mut unknown = String::new();
         let mut title = String::new();
+        let mut dateline = String::new();
         let mut body = String::new();
 
         for child in element.children() {
             match ElementType::new(child){
+                DATE(d) => date = d,
                 TOPICS(t) => topics = t,
                 PLACES(p) => places = p,
-                BODY(t,b) => (title, body) = (t, b),
+                PEOPLE(p) => people = p,
+                ORGS(o) => orgs = o,
+                EXCHANGES(e) => exchanges = e,
+                UNKNOWN(u) => unknown = u,
+                BODY(t,b, d) => (title, body, dateline) = (t, b, d),
                 OTHER  => {},
             }
         }
 
-        Self{ topics, places, title, body }
+        Self{ date, topics, places, people, orgs, exchanges, unknown, title, dateline, body }
     }
 }
 
