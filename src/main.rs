@@ -1,18 +1,35 @@
 extern crate core;
 
 use std::borrow::Borrow;
-use std::cmp::{max, min, Ordering};
+use std::cmp::{min, Ordering};
+use std::env::Args;
 use std::fs;
 use std::fs::DirEntry;
 use std::path::Path;
 use minidom::Element;
 use regex::Regex;
 use rand::seq::SliceRandom;
+use clap::Parser;
 use serde::{Deserialize, Serialize};
 use crate::ElementType::{BODY, DATE, EXCHANGES, ORGS, OTHER, PEOPLE, PLACES, TOPICS, UNKNOWN};
 
+#[derive(Parser, Debug)]
+#[command(version)]
+struct Config {
+    directory: String,
+    #[arg(short, long, default_value_t = 3)]
+    k: usize,
+    #[arg(short, long, default_value_t = 0.7)]
+    ratio: f32,
+    #[arg(short, long, default_value_t = 100)]
+    test_size: usize,
+}
+
 fn main() {
-    let sgm_files = get_files_with_extension("reuters", "sgm");
+
+    let config: Config = Config::parse();
+
+    let sgm_files = get_files_with_extension(config.directory.as_str(), "sgm");
     let mut all_reuters: Vec<Reuters> = vec![];
     sgm_files.iter().for_each(|file| {
         if let Some(content) = read_sgm_file_content(file) {
@@ -26,12 +43,14 @@ fn main() {
         }
     });
 
-    let testing_items = 100;
-    let k = 3;
-    let ratio = 0.7;
+    let testing_items = config.test_size;
+    let k = config.k;
+    let ratio = config.ratio;
     let split_ratio = (all_reuters.len() as f32 * ratio) as usize;
     let (training_slice, testing_slice) = (&all_reuters[..split_ratio], &all_reuters[split_ratio..]);
 
+    println!("Testing Slice: {}, Training Slice: {}", testing_slice.len(), training_slice.len());
+    println!("K: {}, Ratio: {}, Test Size: {}\n", config.k, config.ratio, config.test_size);
     for testing in testing_slice {
         let samples: Vec<&Reuters> = training_slice.choose_multiple(&mut rand::thread_rng(), testing_items).collect();
         let mut distances = vec![];
