@@ -1,12 +1,13 @@
 extern crate core;
 
 use std::borrow::Borrow;
-use std::cmp::{min, Ordering};
+use std::cmp::{max, min, Ordering};
 use std::fs;
 use std::fs::DirEntry;
 use std::path::Path;
 use minidom::Element;
 use regex::Regex;
+use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 use crate::ElementType::{BODY, DATE, EXCHANGES, ORGS, OTHER, PEOPLE, PLACES, TOPICS, UNKNOWN};
 
@@ -25,31 +26,61 @@ fn main() {
         }
     });
 
+    let testing_items = 100;
     let k = 3;
+    let ratio = 0.7;
+    let split_ratio = (all_reuters.len() as f32 * ratio) as usize;
+    let (training_slice, testing_slice) = (&all_reuters[..split_ratio], &all_reuters[split_ratio..]);
 
-    let split = (all_reuters.len() as f32 * 0.9) as usize;
+    for testing in testing_slice {
+        let samples: Vec<&Reuters> = training_slice.choose_multiple(&mut rand::thread_rng(), testing_items).collect();
+        let mut distances = vec![];
+        for sample in samples {
+            let distance = testing.distance(sample);
+            distances.push((sample, distance));
+            distances.sort_by(|(_, a), (_, b) | {
+                if a > b {
+                    Ordering::Greater
+                } else {
+                    Ordering::Less
+                }});
 
-    let training_slice = &all_reuters[0..split];
-    let testing_slice = &all_reuters[split..];
+        }
+        println!("→ {:?}", testing.numbers());
+        let k_checked = &distances[..min(k, distances.len())];
+        for (kc,d) in k_checked {
+            println!("  {:?} ←→ {}", kc.numbers(), d);
+        }
+        println!("-----------")
 
-    println!("Training: {}, Testing: {}", training_slice.len(), testing_slice.len());
+    }
 
-    let trained: Vec<Vec5> = training_slice.iter().map(|r| Vec5::new(r)).collect();
 
-    testing_slice.iter().for_each(|test| {
-        let mut closest = vec![];
-        trained.iter().for_each(|train| {
-            let dist = train.distance(&Vec5::new(test));
-            closest.push(Vec5Distance::new(train.clone().to_owned(), dist as u32));
-            closest.sort();
-
-            println!("Tested: {:?}", Vec5::new(&test));
-            let max = closest.len();
-            let slice = &closest[0..min(max, k)];
-            slice.iter().for_each(|item| println!("{:?}", item));
-            println!("------------------")
-        });
-    })
+    // let k = 3;
+    //
+    // let split = (all_reuters.len() as f32 * 0.9) as usize;
+    //
+    // let training_slice = &all_reuters[0..split];
+    // let testing_slice = &all_reuters[split..];
+    //
+    // println!("Training: {}, Testing: {}", training_slice.len(), testing_slice.len());
+    //
+    // let trained: Vec<Vec5> = training_slice.iter().map(|r| Vec5::new(r)).collect();
+    //
+    // testing_slice.iter().for_each(|test| {
+    //     let mut closest = vec![];
+    //     trained.iter().for_each(|train| {
+    //         let dist = train.distance(&Vec5::new(test));
+    //         closest.push(Vec5Distance::new(train.clone().to_owned(), dist as u32));
+    //         closest.sort();
+    //
+    //         println!("Tested: {:?}", Vec5::new(&test));
+    //         let max = closest.len();
+    //         let slice = &closest[0..min(max, k)];
+    //         slice.iter().for_each(|item| println!("{:?}", item));
+    //         println!("------------------")
+    //     });
+    // })
 
     // let vectors: Vec<Vec5> = all_reuters.iter().map(|reut| {
     //    Vec5::new(reut)
@@ -91,41 +122,7 @@ fn main() {
     // println!("{}", serde_json::to_string_pretty(&all_reuters).unwrap());
 }
 
-#[derive(Debug, Eq)]
-struct Vec5Distance {
-    vec: Vec5,
-    dist: u32,
-}
-
-impl Vec5Distance {
-    pub fn new(vec: Vec5, dist: u32) -> Self {
-        Self {vec, dist}
-    }
-}
-
-impl Ord for Vec5Distance {
-    fn cmp(&self, other: &Self) -> Ordering {
-        if self.dist > other.dist {
-            return Ordering::Greater;
-        } else {
-            return Ordering::Less;
-        }
-    }
-}
-
-impl PartialOrd for Vec5Distance {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl PartialEq for Vec5Distance {
-    fn eq(&self, other: &Self) -> bool {
-        self.dist == other.dist
-    }
-}
-
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone)]
 struct Vec5 {
     body_word_count: u32,
     body_char_count: u32,
@@ -315,6 +312,22 @@ impl Reuters{
     fn sentence_count(&self) -> u32 {
         self.body.split(".").count() as u32
     }
+
+    pub fn distance(&self, other: &Reuters) -> i32 {
+        let (wc, owc)   = (self.word_count()       as i32, other.word_count()       as i32);
+        let (cc, occ)   = (self.char_count()       as i32, other.char_count()       as i32);
+        let (sc, osc)   = (self.sentence_count()   as i32, other.sentence_count()   as i32);
+        let (twc, otwc) = (self.title_word_count() as i32, other.title_word_count() as i32);
+        let (tcc, otcc) = (self.title_char_count() as i32, other.title_char_count() as i32);
+
+        (wc - owc).pow(2) + (cc - occ).pow(2) + (sc - osc).pow(2) + (twc - otwc).pow(2) + (tcc - otcc).pow(2)
+        // 0u32
+    }
+
+    pub fn numbers(&self) -> (u32, u32, u32, u32, u32) {
+        (self.word_count(), self.char_count(), self.sentence_count(), self.title_word_count(), self.title_char_count())
+    }
+
 }
 
 fn read_sgm_file_content(file: &DirEntry) -> Option<String> {
