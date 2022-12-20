@@ -2,7 +2,6 @@ extern crate core;
 
 use std::borrow::Borrow;
 use std::cmp::{min, Ordering};
-use std::env::Args;
 use std::fs;
 use std::fs::DirEntry;
 use std::path::Path;
@@ -73,100 +72,25 @@ fn main() {
         println!("-----------")
 
     }
-
-
-    // let k = 3;
-    //
-    // let split = (all_reuters.len() as f32 * 0.9) as usize;
-    //
-    // let training_slice = &all_reuters[0..split];
-    // let testing_slice = &all_reuters[split..];
-    //
-    // println!("Training: {}, Testing: {}", training_slice.len(), testing_slice.len());
-    //
-    // let trained: Vec<Vec5> = training_slice.iter().map(|r| Vec5::new(r)).collect();
-    //
-    // testing_slice.iter().for_each(|test| {
-    //     let mut closest = vec![];
-    //     trained.iter().for_each(|train| {
-    //         let dist = train.distance(&Vec5::new(test));
-    //         closest.push(Vec5Distance::new(train.clone().to_owned(), dist as u32));
-    //         closest.sort();
-    //
-    //         println!("Tested: {:?}", Vec5::new(&test));
-    //         let max = closest.len();
-    //         let slice = &closest[0..min(max, k)];
-    //         slice.iter().for_each(|item| println!("{:?}", item));
-    //         println!("------------------")
-    //     });
-    // })
-
-    // let vectors: Vec<Vec5> = all_reuters.iter().map(|reut| {
-    //    Vec5::new(reut)
-    // }).collect();
-    //
-    // let slice = vectors[];
-    //
-    //
-    // for vector in vectors {
-    //     println!("{},{},{},{},{}",
-    //              vector.body_word_count,
-    //              vector.body_char_count,
-    //              vector.body_sentence_count,
-    //              vector.title_word_count,
-    //              vector.title_char_count);
-    // }
-
-    // let mut p = HashMap::<String, u32>::new();
-    // for reuter in all_reuters {
-    //     for place in reuter.places {
-    //         let exist = p.get(place.as_str());
-    //         if let Some(exist) = exist {
-    //             p.insert(place.to_string(), exist+1);
-    //         }else {
-    //             p.insert(place.to_string(), 1);
-    //         }
-    //     }
-    //
-    //     // let (wc, cc, sc) = (reuter.word_count(), reuter.char_count(), reuter.sentence_count());
-    //     // println!("{}", reuter.date);
-    //     // println!("WC:{}, CC:{}, SC:{}", reuter.word_count(), reuter.char_count(), reuter.sentence_count());
-    // }
-
-    // for pp in p {
-    //     println!("{} : {}",pp.0, pp.1);
-    // }
-
-    // println!("{}",all_reuters.len());
-    // println!("{}", serde_json::to_string_pretty(&all_reuters).unwrap());
 }
 
-#[derive(Debug, Copy, Clone)]
-struct Vec5 {
-    body_word_count: u32,
-    body_char_count: u32,
-    body_sentence_count: u32,
-    title_word_count: u32,
-    title_char_count: u32,
+trait TextTraits {
+    fn word_count(&self) -> u32;
+    fn sentence_count(&self) -> u32;
+    fn characters_count(&self) -> u32;
 }
 
-impl Vec5 {
-    pub fn new(reut: &Reuters) -> Self {
-        Self {
-            body_word_count: reut.word_count(),
-            body_char_count: reut.char_count(),
-            body_sentence_count: reut.sentence_count(),
-            title_word_count: reut.title_word_count(),
-            title_char_count: reut.title_char_count(),
-        }
+impl TextTraits for String {
+    fn word_count(&self) -> u32 {
+        self.split(" ").count() as u32
     }
 
-    pub fn distance(&self, other: &Vec5) -> u32 {
-        (self.body_word_count - other.body_word_count).pow(2) +
-            (self.body_char_count - other.body_char_count).pow(2) +
-            (self.body_sentence_count - other.body_sentence_count).pow(2) +
-            (self.title_word_count - other.title_word_count).pow(2) +
-            (self.title_char_count - other.title_char_count).pow(2)
+    fn sentence_count(&self) -> u32 {
+        self.split(".").count() as u32
+    }
+
+    fn characters_count(&self) -> u32 {
+        self.chars().collect::<Vec<char>>().len() as u32
     }
 }
 
@@ -312,41 +236,24 @@ impl Reuters{
         Self{ date, topics, places, people, orgs, exchanges, unknown, title, dateline, body }
     }
 
-    fn title_word_count(&self) -> u32 {
-        self.title.split(" ").count() as u32
-    }
-
-    fn title_char_count(&self) -> u32 {
-        self.title.chars().collect::<Vec<char>>().len() as u32
-    }
-
-    fn word_count(&self) -> u32 {
-        self.body.split(" ").count() as u32
-    }
-
-    fn char_count(&self) -> u32 {
-        self.body.chars().collect::<Vec<char>>().len() as u32
-    }
-
-    fn sentence_count(&self) -> u32 {
-        self.body.split(".").count() as u32
-    }
-
     pub fn distance(&self, other: &Reuters) -> i32 {
-        let (wc, owc)   = (self.word_count()       as i32, other.word_count()       as i32);
-        let (cc, occ)   = (self.char_count()       as i32, other.char_count()       as i32);
-        let (sc, osc)   = (self.sentence_count()   as i32, other.sentence_count()   as i32);
-        let (twc, otwc) = (self.title_word_count() as i32, other.title_word_count() as i32);
-        let (tcc, otcc) = (self.title_char_count() as i32, other.title_char_count() as i32);
+        let (wc, owc)   = (       self.body.word_count() as i32,        other.body.word_count() as i32);
+        let (cc, occ)   = ( self.body.characters_count() as i32,  other.body.characters_count() as i32);
+        let (sc, osc)   = (   self.body.sentence_count() as i32,    other.body.sentence_count() as i32);
+        let (twc, otwc) = (      self.title.word_count() as i32, other.title.characters_count() as i32);
+        let (tcc, otcc) = (self.title.characters_count() as i32, other.title.characters_count() as i32);
 
         (wc - owc).pow(2) + (cc - occ).pow(2) + (sc - osc).pow(2) + (twc - otwc).pow(2) + (tcc - otcc).pow(2)
         // 0u32
     }
 
     pub fn numbers(&self) -> (u32, u32, u32, u32, u32) {
-        (self.word_count(), self.char_count(), self.sentence_count(), self.title_word_count(), self.title_char_count())
+        (self.body.word_count(),
+         self.body.characters_count(),
+         self.body.sentence_count(),
+         self.title.word_count(),
+         self.title.characters_count())
     }
-
 }
 
 fn read_sgm_file_content(file: &DirEntry) -> Option<String> {
