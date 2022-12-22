@@ -8,7 +8,7 @@ use std::path::Path;
 use minidom::Element;
 use regex::Regex;
 use rand::seq::SliceRandom;
-use clap::Parser;
+use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
 // use rayon::prelude::*;
 use crate::ElementType::{BODY, DATE, EXCHANGES, ORGS, OTHER, PEOPLE, PLACES, TOPICS, UNKNOWN};
@@ -25,8 +25,16 @@ struct Config {
     test_size: usize,
     #[arg(short, long)]
     json_dump: Option<String>,
+    #[arg(short, long, value_enum, default_value_t = Algorithm::EUCLIDEAN)]
+    algorithm: Algorithm,
 }
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum Algorithm {
+    EUCLIDEAN,
+    MANHATTAN,
+    CHEBYSHEV,
+}
 
 fn main() {
 
@@ -56,7 +64,13 @@ fn main() {
         let samples: Vec<&Reuters> = training_slice.choose_multiple(&mut rand::thread_rng(), testing_items).collect();
         let mut distances = vec![];
         for sample in samples {
-            let distance = testing.distance(sample);
+
+            let distance = match config.algorithm {
+                Algorithm::EUCLIDEAN => testing.distance_euclidean(sample),
+                Algorithm::MANHATTAN => testing.distance_manhattan(sample),
+                Algorithm::CHEBYSHEV => testing.distance_chebyshev(sample),
+            };
+
             distances.push((sample, distance));
             distances.sort_by(|(_, a), (_, b) | {
                 if a > b {
@@ -238,12 +252,24 @@ impl Reuters{
         Self{ date, topics, places, people, orgs, exchanges, unknown, title, dateline, body }
     }
 
-    pub fn distance(&self, other: &Reuters) -> f32 {
+    pub fn distance_euclidean(&self, other: &Reuters) -> f32 {
         (((self.body.word_count() - other.body.word_count()).pow(2) +
         (self.body.characters_count() - other.body.characters_count()).pow(2) +
         (self.body.sentence_count() - other.body.sentence_count()).pow(2) +
         (self.title.word_count() - other.title.word_count()).pow(2) +
         (self.title.characters_count() - other.title.characters_count()).pow(2)) as f32).sqrt()
+    }
+
+    pub fn distance_manhattan(&self, other: &Reuters) -> f32 {
+        ((self.body.word_count() - other.body.word_count()).abs() +
+        (self.body.characters_count() - other.body.characters_count()).abs() +
+        (self.body.sentence_count() - other.body.sentence_count()).abs() +
+        (self.title.word_count() - other.title.word_count()).abs() +
+        (self.title.characters_count() - other.title.characters_count()).abs()) as f32
+    }
+
+    pub fn distance_chebyshev(&self, other: &Reuters) -> f32 {
+        todo!("Chebyshev distance is not implemented");
     }
 
     pub fn numbers(&self) -> (i32, i32, i32, i32, i32) {
