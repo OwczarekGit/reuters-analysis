@@ -3,13 +3,14 @@ extern crate core;
 use std::borrow::Borrow;
 use std::cmp::{min, Ordering};
 use std::fs;
-use std::fs::DirEntry;
+use std::fs::{DirEntry};
 use std::path::Path;
 use minidom::Element;
 use regex::Regex;
 use rand::seq::SliceRandom;
 use clap::Parser;
 use serde::{Deserialize, Serialize};
+// use rayon::prelude::*;
 use crate::ElementType::{BODY, DATE, EXCHANGES, ORGS, OTHER, PEOPLE, PLACES, TOPICS, UNKNOWN};
 
 #[derive(Parser, Debug)]
@@ -22,25 +23,26 @@ struct Config {
     ratio: f32,
     #[arg(short, long, default_value_t = 100)]
     test_size: usize,
+    #[arg(short, long)]
+    json_dump: Option<String>,
 }
+
 
 fn main() {
 
     let config: Config = Config::parse();
+    let all_reuters = get_reuters_from_sgm_files(config.directory.as_str());
 
-    let sgm_files = get_files_with_extension(config.directory.as_str(), "sgm");
-    let mut all_reuters: Vec<Reuters> = vec![];
-    sgm_files.iter().for_each(|file| {
-        if let Some(content) = read_sgm_file_content(file) {
-            if let Ok(root) = content.parse::<Element>(){
-                root.children().for_each(|child|{
-                    if child.is("REUTERS", "") {
-                        all_reuters.push(Reuters::new(&child));
-                    }
-                });
+    if let Some(json_dump) = config.json_dump {
+        if let Ok(buf) = serde_json::to_string_pretty(&all_reuters) {
+            if let Ok(_) = fs::write(json_dump, buf) {
+                println!("Successfully saved reuters as JSON.");
+            } else {
+                panic!("Failed to write reuters to JSON file.");
             }
+            return;
         }
-    });
+    }
 
     let testing_items = config.test_size;
     let k = config.k;
@@ -75,22 +77,22 @@ fn main() {
 }
 
 trait TextTraits {
-    fn word_count(&self) -> u32;
-    fn sentence_count(&self) -> u32;
-    fn characters_count(&self) -> u32;
+    fn word_count(&self) -> i32;
+    fn sentence_count(&self) -> i32;
+    fn characters_count(&self) -> i32;
 }
 
 impl TextTraits for String {
-    fn word_count(&self) -> u32 {
-        self.split(" ").count() as u32
+    fn word_count(&self) -> i32 {
+        self.split(" ").count() as i32
     }
 
-    fn sentence_count(&self) -> u32 {
-        self.split(".").count() as u32
+    fn sentence_count(&self) -> i32 {
+        self.split(".").count() as i32
     }
 
-    fn characters_count(&self) -> u32 {
-        self.chars().collect::<Vec<char>>().len() as u32
+    fn characters_count(&self) -> i32 {
+        self.chars().collect::<Vec<char>>().len() as i32
     }
 }
 
@@ -236,18 +238,15 @@ impl Reuters{
         Self{ date, topics, places, people, orgs, exchanges, unknown, title, dateline, body }
     }
 
-    pub fn distance(&self, other: &Reuters) -> i32 {
-        let (wc, owc)   = (       self.body.word_count() as i32,        other.body.word_count() as i32);
-        let (cc, occ)   = ( self.body.characters_count() as i32,  other.body.characters_count() as i32);
-        let (sc, osc)   = (   self.body.sentence_count() as i32,    other.body.sentence_count() as i32);
-        let (twc, otwc) = (      self.title.word_count() as i32, other.title.characters_count() as i32);
-        let (tcc, otcc) = (self.title.characters_count() as i32, other.title.characters_count() as i32);
-
-        (wc - owc).pow(2) + (cc - occ).pow(2) + (sc - osc).pow(2) + (twc - otwc).pow(2) + (tcc - otcc).pow(2)
-        // 0u32
+    pub fn distance(&self, other: &Reuters) -> f32 {
+        (((self.body.word_count() - other.body.word_count()).pow(2) +
+        (self.body.characters_count() - other.body.characters_count()).pow(2) +
+        (self.body.sentence_count() - other.body.sentence_count()).pow(2) +
+        (self.title.word_count() - other.title.word_count()).pow(2) +
+        (self.title.characters_count() - other.title.characters_count()).pow(2)) as f32).sqrt()
     }
 
-    pub fn numbers(&self) -> (u32, u32, u32, u32, u32) {
+    pub fn numbers(&self) -> (i32, i32, i32, i32, i32) {
         (self.body.word_count(),
          self.body.characters_count(),
          self.body.sentence_count(),
@@ -291,4 +290,21 @@ fn get_files_with_extension(directory: &str, extension: &str) -> Vec<DirEntry> {
         })
     }
     file_list
+}
+
+fn get_reuters_from_sgm_files(dir :&str) -> Vec<Reuters> {
+    let sgm_files = get_files_with_extension(dir, "sgm");
+    let mut all_reuters: Vec<Reuters> = vec![];
+    sgm_files.iter().for_each(|file| {
+        if let Some(content) = read_sgm_file_content(file) {
+            if let Ok(root) = content.parse::<Element>(){
+                root.children().for_each(|child|{
+                    if child.is("REUTERS", "") {
+                        all_reuters.push(Reuters::new(&child));
+                    }
+                });
+            }
+        }
+    });
+    all_reuters
 }
