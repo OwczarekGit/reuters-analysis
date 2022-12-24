@@ -269,7 +269,15 @@ impl Reuters{
     }
 
     pub fn distance_chebyshev(&self, other: &Reuters) -> f32 {
-        todo!("Chebyshev distance is not implemented");
+        let mut distances = vec![];
+
+        distances.push((       self.body.word_count() - other.body.word_count()       ).abs());
+        distances.push(( self.body.characters_count() - other.body.characters_count() ).abs());
+        distances.push((   self.body.sentence_count() - other.body.sentence_count()   ).abs());
+        distances.push((      self.title.word_count() - other.title.word_count()      ).abs());
+        distances.push((self.title.characters_count() - other.title.characters_count()).abs());
+
+        *(distances.iter().max().unwrap_or(&0)) as f32
     }
 
     pub fn numbers(&self) -> (i32, i32, i32, i32, i32) {
