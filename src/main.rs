@@ -4,14 +4,12 @@ use std::cmp::{Ordering};
 use std::collections::HashMap;
 use std::{fs, io};
 use std::io::Write;
-use std::mem::transmute;
 use clap::{Parser, ValueEnum};
 use rayon::prelude::*;
 mod article;
 mod utils;
 use crate::article::article::{Article};
 use crate::article::element_type::ElementType;
-use crate::utils::cleaner::Cleaner;
 use crate::utils::sgm_helper::get_articles_from_sgm;
 
 #[derive(Parser, Debug)]
@@ -22,8 +20,6 @@ struct Config{
     k: usize,
     #[arg(short, long, default_value_t = 0.7)]
     ratio: f32,
-    #[arg(short, long, default_value_t = 100)]
-    test_size: usize,
     #[arg(short, long)]
     json_dump: Option<String>,
     #[arg(short, long, value_enum, default_value_t = Algorithm::EUCLIDEAN)]
@@ -41,7 +37,7 @@ enum Algorithm {
 fn main() {
 
     let config = Config::parse();
-    let k = config.k;
+
     let ratio = config.ratio;
 
     let mut all_articles= vec![];
@@ -54,13 +50,13 @@ fn main() {
     json_dump(&config, &all_articles);
     let (training_slice, testing_slice) = split_dataset(ratio, all_articles);
     print_general_params(&config, &training_slice, &testing_slice);
-    classify_test_data_and_verify(testing_slice, training_slice, k as i32);
+    classify_test_data_and_verify(testing_slice, training_slice, config);
 
 }
 
 fn print_general_params(config: &Config, training_slice: &Vec<Article>, testing_slice: &Vec<Article>) {
     println!("Testing Slice: {}, Training Slice: {}", testing_slice.len(), training_slice.len());
-    println!("K: {}, Ratio: {}, Test Size: {}\n", config.k, config.ratio, config.test_size);
+    println!("K: {}, Ratio: {}", config.k, config.ratio);
 }
 
 fn json_dump(config: &Config, all_reuters: &Vec<Article>) {
@@ -84,7 +80,8 @@ fn split_dataset(ratio: f32, articles: Vec<Article>) -> (Vec<Article>, Vec<Artic
 
 fn classify_test_data_and_verify(
     test_articles: Vec<Article>,
-    train_articles: Vec<Article>, k: i32) {
+    train_articles: Vec<Article>,
+    config: Config) {
 
     let test_articles_size = test_articles.len();
     let mut all_ok: i32 = 0;
@@ -93,10 +90,9 @@ fn classify_test_data_and_verify(
     let mut place_not_ok: HashMap<String, i32> = HashMap::new();
     let mut counter: i32 = 0;
     for article in test_articles {
-        let classification_result = classify_datapoint(&article, &train_articles, k);
+        let classification_result = classify_datapoint(&article, &train_articles, &config);
         let place = article.places[0].clone();
         let verification_result: bool = verify_classification(article, classification_result);
-        // println!("Ver. Result no. {} : {}", counter, verification_result);
         counter += 1;
         if (verification_result == true) {
             all_ok += 1;
@@ -127,11 +123,10 @@ fn classify_test_data_and_verify(
 
 }
 
-fn classify_datapoint(test_article: &Article, train_articles: &Vec<Article>, k: i32) -> String {
+fn classify_datapoint(test_article: &Article, train_articles: &Vec<Article>, config: &Config) -> String {
 
-    let mut distances: Vec<CalculatedArticle> = calculate_distances(test_article, train_articles);
-    let nearest_neighbors = find_k_nearest_neighbors(&mut distances, k);
-    let mut temp: Vec<String> = vec![];
+    let mut distances: Vec<CalculatedArticle> = calculate_distances(test_article, train_articles, config.algorithm);
+    let nearest_neighbors = find_k_nearest_neighbors(&mut distances, config.k as i32);
 
     return calculate_classification_result(nearest_neighbors);
 }
@@ -178,19 +173,26 @@ fn find_k_nearest_neighbors(distances: &mut Vec<CalculatedArticle>, k: i32) -> V
         y.push(distance.article.clone());
     }
 
+
     return y[..k.min(y.len() as i32) as usize].to_vec();
 }
 
-fn calculate_distances(test_article: &Article, train_articles: &Vec<Article>) -> Vec<CalculatedArticle> {
+fn calculate_distances(test_article: &Article, train_articles: &Vec<Article>, algorithm: Algorithm) -> Vec<CalculatedArticle> {
     train_articles.par_iter()
         .map(|article| {
-            calculate_distance(test_article.clone(), &article)
+            calculate_distance(test_article.clone(), &article, algorithm)
         }).collect()
 }
 
-fn calculate_distance(a: Article, b: &Article) -> CalculatedArticle {
-    let distance = a.distance_euclidean(&b);
-    return CalculatedArticle{
+fn calculate_distance(a: Article, b: &Article, algorithm: Algorithm, ) -> CalculatedArticle {
+    let distance = match algorithm {
+        Algorithm::EUCLIDEAN => a.distance_euclidean(&b),
+        Algorithm::MANHATTAN => a.distance_manhattan(&b),
+        Algorithm::CHEBYSHEV => a.distance_chebyshev(&b),
+        _ => panic!("INVALID ALGORITHM")
+    };
+
+    return CalculatedArticle {
         article: b.clone(),
         distance
     };
