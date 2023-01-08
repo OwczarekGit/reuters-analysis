@@ -31,7 +31,7 @@ struct Config{
 }
 
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Serialize, Deserialize)]
 enum Algorithm {
     EUCLIDEAN,
     MANHATTAN,
@@ -61,7 +61,7 @@ fn main() {
 
     json_dump(&config, &all_articles);
     let (training_slice, testing_slice) = split_dataset(ratio, all_articles);
-    print_general_params(&config, &training_slice, &testing_slice);
+    // print_general_params(&config, &training_slice, &testing_slice);
     classify_test_data_and_verify(testing_slice, training_slice, config);
 
 }
@@ -135,7 +135,7 @@ fn classify_test_data_and_verify(
 
         }
         counter += 1;
-        print!("\rProgress: {:.2}%", (counter as f32 / test_articles_size as f32) *100f32);
+        // print!("\rProgress: {:.2}%", (counter as f32 / test_articles_size as f32) *100f32);
         io::stdout().flush().unwrap();
     }
 
@@ -175,7 +175,8 @@ fn classify_test_data_and_verify(
     }
 
     let result = Result{ 
-        k: config.k, 
+        k: config.k,
+        algorithm: config.algorithm,
         split_ratio: 
         config.ratio, 
         testing_slice_size: test_articles_size,
@@ -192,6 +193,7 @@ fn classify_test_data_and_verify(
 #[derive(Clone, Serialize, Deserialize)]
 struct Result {
     k: usize,
+    algorithm: Algorithm,
     split_ratio: f32,
     testing_slice_size: usize,
     training_slice_size: usize,
