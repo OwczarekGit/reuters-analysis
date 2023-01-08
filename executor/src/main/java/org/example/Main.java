@@ -57,41 +57,41 @@ public class Main implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        TaskGenerationService taskGenerationService = new TaskGenerationService(
-                List.of(
-                        3,
-                        5,
-                        6,
-                        9,
-                        12,
-                        16,
-                        20,
-                        24,
-                        27,
-                        30
-                ),
-                List.of(
-                        0.4,
-                        0.3,
-                        0.5,
-                        0.6,
-                        0.8
-                ),
-                List.of(
-                        Algorithm.MANHATTAN//,
-//                        Algorithm.CHEBYSHEV,
-//                        Algorithm.EUCLIDEAN
-                ),
-                "test-data"
-        );
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(7);
-        taskGenerationService.generateTasks().forEach(threadPoolExecutor::submit);
-        threadPoolExecutor.shutdown();
-        try {
-            threadPoolExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        processResults();
+//        TaskGenerationService taskGenerationService = new TaskGenerationService(
+//                List.of(
+//                        3,
+//                        5,
+//                        6,
+//                        9,
+//                        12,
+//                        16,
+//                        20,
+//                        24,
+//                        27,
+//                        30
+//                ),
+//                List.of(
+//                        0.4,
+//                        0.3,
+//                        0.5,
+//                        0.6,
+//                        0.8
+//                ),
+//                List.of(
+//                        Algorithm.MANHATTAN//,
+////                        Algorithm.CHEBYSHEV,
+////                        Algorithm.EUCLIDEAN
+//                ),
+//                "test-data"
+//        );
+//        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(7);
+//        taskGenerationService.generateTasks().forEach(threadPoolExecutor::submit);
+//        threadPoolExecutor.shutdown();
+//        try {
+//            threadPoolExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//        processResults();
     }
 }
