@@ -43,7 +43,7 @@ fn main() {
     let ratio = config.ratio;
 
     let searched = vec![
-        //"usa".to_string(),
+        "usa".to_string(),
         "uk".to_string(),
         "west-germany".to_string(),
         "france".to_string(),
@@ -52,7 +52,7 @@ fn main() {
 
     let mut all_articles = vec![];
     for article in get_articles_from_sgm(config.directory.as_str()) {
-        if (article.places.len() == 1 && searched.contains(&article.places[0])) {
+        if article.places.len() == 1 && searched.contains(&article.places[0]) {
             all_articles.push(article)
         }
     }
@@ -136,7 +136,7 @@ fn classify_test_data_and_verify(
         io::stdout().flush().unwrap();
     }
 
-    let accuracy: f32 = (all_ok as f32 / test_articles_size as f32) * 100f32;
+    let accuracy: f32 = all_ok as f32 / test_articles_size as f32;
 
     let mut precision_map: HashMap<String, f32> = HashMap::new();
     let mut recall_map: HashMap<String, f32> = HashMap::new();
@@ -148,7 +148,7 @@ fn classify_test_data_and_verify(
         let f_neg: f32 = *false_negative.get(key.clone().as_str()).unwrap_or(&0i32) as f32;
         let tn: f32    = *true_negative.get(key.clone().as_str()).unwrap_or(&0i32) as f32;
 
-        let precision: f32 = if (tp + fp == 0.0) {
+        let precision: f32 = if tp + fp == 0.0 {
             0f32
         } else {
             tp / (tp + fp)
@@ -156,14 +156,14 @@ fn classify_test_data_and_verify(
 
         precision_map.insert(key.clone(), precision);
 
-        let recall: f32 = if (tp + f_neg == 0.0) {
+        let recall: f32 = if tp + f_neg == 0.0 {
             0f32
         } else {
             tp / (tp + f_neg)
         };
         recall_map.insert(key.clone(), recall);
 
-        let fall_out: f32 = if (fp + tn == 0.0) {
+        let fall_out: f32 = if fp + tn == 0.0 {
             0f32
         } else {
             fp / (fp + tn)
