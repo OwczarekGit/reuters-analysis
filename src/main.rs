@@ -103,6 +103,7 @@ fn classify_test_data_and_verify(
     config: Config) {
 
     let test_articles_size = test_articles.len();
+    let train_articles_size = train_articles.len();
     let mut counter: i32 = 0;
     let mut all_ok: i32 = 0;
 
@@ -171,12 +172,27 @@ fn classify_test_data_and_verify(
         fallout_map.insert(key.clone(), fall_out);
     }
 
-    let result = Result{ accuracy, precisions: precision_map, fallout: fallout_map, recall: recall_map };
+    let result = Result{ 
+        k: config.k, 
+        split_ratio: 
+        config.ratio, 
+        testing_slice_size: test_articles_size,
+        training_slice_size: train_articles_size,
+        accuracy, 
+        precisions: precision_map, 
+        fallout: fallout_map, 
+        recall: recall_map 
+    };
+
     println!("\n{}",serde_json::to_string_pretty(&result).unwrap());
 }
 
 #[derive(Clone, Serialize, Deserialize)]
 struct Result {
+    k: usize,
+    split_ratio: f32,
+    testing_slice_size: usize,
+    training_slice_size: usize,
     accuracy: f32,
     precisions: HashMap<String, f32>,
     fallout: HashMap<String, f32>,
