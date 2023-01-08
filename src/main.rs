@@ -26,6 +26,8 @@ struct Config{
     json_dump: Option<String>,
     #[arg(short, long, value_enum, default_value_t = Algorithm::EUCLIDEAN)]
     algorithm: Algorithm,
+    #[arg(short, long, default_value_t = false)]
+    multithreading: bool
 }
 
 
@@ -201,7 +203,7 @@ struct Result {
 
 fn classify_datapoint(test_article: &Article, train_articles: &Vec<Article>, config: &Config) -> String {
 
-    let mut distances: Vec<CalculatedArticle> = calculate_distances(test_article, train_articles, config.algorithm);
+    let mut distances: Vec<CalculatedArticle> = calculate_distances(test_article, train_articles, &config);
     let nearest_neighbors = find_k_nearest_neighbors(&mut distances, config.k as i32);
 
     return calculate_classification_result(nearest_neighbors);
@@ -253,11 +255,18 @@ fn find_k_nearest_neighbors(distances: &mut Vec<CalculatedArticle>, k: i32) -> V
     return y[..k.min(y.len() as i32) as usize].to_vec();
 }
 
-fn calculate_distances(test_article: &Article, train_articles: &Vec<Article>, algorithm: Algorithm) -> Vec<CalculatedArticle> {
-    train_articles.par_iter()
-        .map(|article| {
-            calculate_distance(test_article.clone(), &article, algorithm)
-        }).collect()
+fn calculate_distances(test_article: &Article, train_articles: &Vec<Article>, config: &Config) -> Vec<CalculatedArticle> {
+    if config.multithreading {
+        train_articles.par_iter()
+            .map(|article| {
+                calculate_distance(test_article.clone(), &article, config.algorithm)
+            }).collect()
+    } else {
+        train_articles.iter()
+            .map(|article| {
+                calculate_distance(test_article.clone(), &article, config.algorithm)
+            }).collect()
+    }
 }
 
 fn calculate_distance(a: Article, b: &Article, algorithm: Algorithm) -> CalculatedArticle {
