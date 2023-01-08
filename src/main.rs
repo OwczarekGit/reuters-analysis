@@ -6,6 +6,8 @@ use std::{fs, io};
 use std::io::Write;
 use clap::{Parser, ValueEnum};
 use rayon::prelude::*;
+use serde::{Deserialize, Serialize};
+
 mod article;
 mod utils;
 use crate::article::article::{Article};
@@ -40,9 +42,17 @@ fn main() {
 
     let ratio = config.ratio;
 
-    let mut all_articles= vec![];
+    let searched = vec![
+        //"usa".to_string(),
+        "uk".to_string(),
+        "west-germany".to_string(),
+        "france".to_string(),
+        "canada".to_string(),
+        "japan".to_string()];
+
+    let mut all_articles = vec![];
     for article in get_articles_from_sgm(config.directory.as_str()) {
-        if article.places.len() > 0 {
+        if (article.places.len() == 1 && searched.contains(&article.places[0])) {
             all_articles.push(article)
         }
     }
@@ -78,49 +88,99 @@ fn split_dataset(ratio: f32, articles: Vec<Article>) -> (Vec<Article>, Vec<Artic
     return (training_slice, testing_slice);
 }
 
+fn create_countries_map(articles: &Vec<Article>) -> HashMap<String, i32>{
+    let mut map: HashMap<String, i32> = HashMap::new();
+    articles.iter().for_each(|article| {
+      map.insert(article.places[0].clone(), 0);
+    });
+
+    map
+}
+
 fn classify_test_data_and_verify(
     test_articles: Vec<Article>,
     train_articles: Vec<Article>,
     config: Config) {
 
     let test_articles_size = test_articles.len();
-    let mut all_ok: i32 = 0;
-    let mut all_not_ok: i32 = 0;
-    let mut place_ok: HashMap<String, i32> = HashMap::new();
-    let mut place_not_ok: HashMap<String, i32> = HashMap::new();
     let mut counter: i32 = 0;
+    let mut all_ok: i32 = 0;
+
+    let mut true_positive:  HashMap<String, i32> = HashMap::new();
+    let mut false_positive: HashMap<String, i32> = HashMap::new();
+    let mut false_negative: HashMap<String, i32> = HashMap::new();
+    let mut true_negative:  HashMap<String, i32> = HashMap::new();
+    let all_countries_map:  HashMap<String, i32> = create_countries_map(&test_articles);
+
     for article in test_articles {
-        let classification_result = classify_datapoint(&article, &train_articles, &config);
+
+        let classification_result: String = classify_datapoint(&article, &train_articles, &config);
         let place = article.places[0].clone();
-        let verification_result: bool = verify_classification(article, classification_result);
-        counter += 1;
-        if (verification_result == true) {
+        let verification_result: bool = verify_classification(article, classification_result.clone());
+        if verification_result == true {
             all_ok += 1;
-            if(place_ok.contains_key(place.as_str())) {
-                let counter = place_ok.get(place.as_str()).unwrap() + 1;
-                place_ok.insert(place.to_string(), counter);
-            } else {
-                place_ok.insert(place.to_string(), 1);
+            *true_positive.entry(classification_result.clone()).or_insert(1) += 1;
+            for (key, _) in &all_countries_map {
+                if *key != classification_result.clone() {
+                    *true_negative.entry(key.clone()).or_insert(1) += 1;
+                }
             }
         }
-            else {
-            all_not_ok += 1;
-            if(place_not_ok.contains_key(place.as_str())) {
-                let counter = place_not_ok.get(place.as_str()).unwrap() + 1;
-                place_not_ok.insert(place.to_string(), counter);
-            } else {
-                place_not_ok.insert(place.to_string(), 1);
-            }
+        else {
+            *false_positive.entry(classification_result.clone()).or_insert(1) += 1;
+            *false_negative.entry(place.clone()).or_insert(1) += 1;
+
         }
+        counter += 1;
         print!("\rProgress: {:.2}%", (counter as f32 / test_articles_size as f32) *100f32);
         io::stdout().flush().unwrap();
     }
-    println!();
-    println!("{} out of {} classified correctly. (Accuracy: {:.2}% )", all_ok, test_articles_size, (all_ok as f32 / test_articles_size as f32) * 100f32 );
-    println!("{} out of {} classified incorrectly.", all_not_ok, test_articles_size);
-    println!("Places ok: {:?}", place_ok);
-    println!("Places not ok: {:?}", place_not_ok);
 
+    let accuracy: f32 = (all_ok as f32 / test_articles_size as f32) * 100f32;
+
+    let mut precision_map: HashMap<String, f32> = HashMap::new();
+    let mut recall_map: HashMap<String, f32> = HashMap::new();
+    let mut fallout_map: HashMap<String, f32> = HashMap::new();
+
+    for (key, _) in all_countries_map {
+        let tp: f32    = *true_positive.get(key.clone().as_str()).unwrap_or(&0i32) as f32;
+        let fp: f32    = *false_positive.get(key.clone().as_str()).unwrap_or(&0i32) as f32;
+        let f_neg: f32 = *false_negative.get(key.clone().as_str()).unwrap_or(&0i32) as f32;
+        let tn: f32    = *true_negative.get(key.clone().as_str()).unwrap_or(&0i32) as f32;
+
+        let precision: f32 = if (tp + fp == 0.0) {
+            0f32
+        } else {
+            tp / (tp + fp)
+        };
+
+        precision_map.insert(key.clone(), precision);
+
+        let recall: f32 = if (tp + f_neg == 0.0) {
+            0f32
+        } else {
+            tp / (tp + f_neg)
+        };
+        recall_map.insert(key.clone(), recall);
+
+        let fall_out: f32 = if (fp + tn == 0.0) {
+            0f32
+        } else {
+            fp / (fp + tn)
+        };
+        fallout_map.insert(key.clone(), fall_out);
+    }
+
+    let result = Result{ accuracy, precisions: precision_map, fallout: fallout_map, recall: recall_map };
+    println!("\n{}",serde_json::to_string_pretty(&result).unwrap());
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+struct Result {
+    accuracy: f32,
+    precisions: HashMap<String, f32>,
+    fallout: HashMap<String, f32>,
+    recall: HashMap<String, f32>
 }
 
 fn classify_datapoint(test_article: &Article, train_articles: &Vec<Article>, config: &Config) -> String {
@@ -184,18 +244,15 @@ fn calculate_distances(test_article: &Article, train_articles: &Vec<Article>, al
         }).collect()
 }
 
-fn calculate_distance(a: Article, b: &Article, algorithm: Algorithm, ) -> CalculatedArticle {
+fn calculate_distance(a: Article, b: &Article, algorithm: Algorithm) -> CalculatedArticle {
     let distance = match algorithm {
         Algorithm::EUCLIDEAN => a.distance_euclidean(&b),
         Algorithm::MANHATTAN => a.distance_manhattan(&b),
         Algorithm::CHEBYSHEV => a.distance_chebyshev(&b),
-        _ => panic!("INVALID ALGORITHM")
+        // _ => panic!("INVALID ALGORITHM")
     };
 
-    return CalculatedArticle {
-        article: b.clone(),
-        distance
-    };
+    CalculatedArticle { article: b.clone(), distance }
 }
 
 fn verify_classification(article: Article, classification_result: String) -> bool {
@@ -206,34 +263,3 @@ fn verify_classification(article: Article, classification_result: String) -> boo
     };
     x
 }
-
-
-
-// for testing in testing_slice {
-//     let samples: Vec<&Article> = training_slice.choose_multiple(&mut rand::thread_rng(), testing_items).collect();
-//     let mut distances = vec![];
-//     for sample in samples {
-//
-//         let distance = match config.algorithm {
-//             Algorithm::EUCLIDEAN => testing.distance_euclidean(sample),
-//             Algorithm::MANHATTAN => testing.distance_manhattan(sample),
-//             Algorithm::CHEBYSHEV => testing.distance_chebyshev(sample),
-//         };
-//
-//         distances.push((sample, distance));
-//         distances.sort_by(|(_, a), (_, b) | {
-//             if a > b {
-//                 Ordering::Greater
-//             } else {
-//                 Ordering::Less
-//             }});
-//
-//     }
-//     println!("→ {:?}", testing.numbers());
-//     let k_checked = &distances[..min(k, distances.len())];
-//     for (kc,d) in k_checked {
-//         println!("  {:?} ←→ {}", kc.numbers(), d);
-//     }
-//     println!("-----------")
-//
-// }
