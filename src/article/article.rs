@@ -77,12 +77,4 @@ impl Article {
 
         *(distances.iter().max().unwrap_or(&0)) as f32
     }
-
-    pub fn numbers(&self) -> (i32, i32, i32, i32, i32) {
-        (self.body.word_count(),
-         self.body.characters_count(),
-         self.body.sentence_count(),
-         self.title.word_count(),
-         self.title.characters_count())
-    }
 }
