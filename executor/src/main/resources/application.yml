@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: classification-executor
+  datasource:
+    username: user
+    password: password
+    url: jdbc:postgresql://localhost:5432/classification-data
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format-sql: true
+      show-sql: true

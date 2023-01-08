@@ -1,0 +1,17 @@
+services:
+  classification-db:
+    container_name: classification-db
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: classification-data
+      PGDATA: /data/postgres
+    volumes:
+      - classification-volume:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  classification-volume:

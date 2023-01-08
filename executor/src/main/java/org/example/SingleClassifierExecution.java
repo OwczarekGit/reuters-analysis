@@ -1,35 +1,24 @@
 package org.example;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
 
+@Getter
+@AllArgsConstructor
 public class SingleClassifierExecution implements Runnable{
 
-    private final ObjectMapper mapper;
     private final Integer k;
     private final Double ratio;
     private final String dataPath;
     private final Boolean multithreading;
     private final Algorithm algorithm;
-    private StringBuilder result;
+    private final StringBuilder result = new StringBuilder();
+    private final ObjectMapper mapper = new ObjectMapper();
 
-    public SingleClassifierExecution(
-            Integer k,
-            Double ratio,
-            String dataPath,
-            Boolean multithreading,
-            Algorithm algorithm
-    ) {
-        this.k = k;
-        this.ratio = ratio;
-        this.dataPath = dataPath;
-        this.multithreading = multithreading;
-        this.algorithm = algorithm;
-        this.result = new StringBuilder();
-        mapper = new ObjectMapper();
-    }
 
     void classify() {
         ProcessBuilder processBuilder = new ProcessBuilder(
@@ -51,8 +40,7 @@ public class SingleClassifierExecution implements Runnable{
             );
             p.waitFor();
             String result = this.result.toString();
-            Result resultMapped = mapper.readValue(result, Result.class);
-            System.out.println(result);
+            ResultDto resultMapped = mapper.readValue(result, ResultDto.class);
             ResultService.addResult(resultMapped);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -60,27 +48,6 @@ public class SingleClassifierExecution implements Runnable{
             throw new RuntimeException(e);
         }
     }
-
-    public Integer getK() {
-        return k;
-    }
-
-    public Double getRatio() {
-        return ratio;
-    }
-
-    public String getDataPath() {
-        return dataPath;
-    }
-
-    public Boolean getMultithreading() {
-        return multithreading;
-    }
-
-    public Algorithm getAlgorithm() {
-        return algorithm;
-    }
-
 
     @Override
     public void run() {
