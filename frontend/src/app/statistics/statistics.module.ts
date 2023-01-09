@@ -13,7 +13,8 @@ import { ListResultsComponent } from './list-results/list-results.component';
     ListResultsComponent
   ],
   exports: [
-    ResultVisualizationComponent
+    ResultVisualizationComponent,
+    ListResultsComponent
   ],
   imports: [
     CommonModule,

@@ -18,7 +18,8 @@ export class ResultVisualizationComponent implements OnInit {
   @Input("ready")
   ready: boolean = false;
 
-  rows: [string, number][] = [];
+  rows: any = []
+  columns: any = ["A","B","C"]
   ratioChartType: ChartType = ChartType.PieChart;
 
   constructor() {
@@ -29,7 +30,12 @@ export class ResultVisualizationComponent implements OnInit {
   }
 
   getRows(): any {
-   this.rows =  [['5', 5],['2', 2]];
+
+   this.rows = [
+     ["A", 1 ,2 ,3],
+     ["B", 3 ,2 ,5],
+     ["C", 1 ,6 ,5],
+   ]
   }
 
   getColumns(): Column[] {

@@ -1,1 +1,11 @@
-<p>list-results works!</p>
+<p>list-results</p>
+<button (click)="refresh()">Refresh list</button>
+<div *ngFor="let result of results; index as i">
+  <div>{{result.creationDate}}</div>
+  <div>{{result.id}}</div>
+  <div>{{result.k}}</div>
+  <div>{{result.algorithm}}</div>
+  <div>{{result.splitRatio}}</div>
+  <button (click)="visualizeResult(i)" >Visualize</button>
+  <button (click)="deleteResult(i)" >Delete</button>
+</div>
