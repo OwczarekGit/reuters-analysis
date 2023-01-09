@@ -11,7 +11,7 @@ export class ListResultsComponent implements OnInit {
   results: Result[] = [];
 
   @Output("visualizeResult")
-  visializeResultEmitter: EventEmitter<Result> = new EventEmitter<Result>();
+  visualizeResultEmitter: EventEmitter<Result> = new EventEmitter<Result>();
 
   constructor(private http: HttpClient) {
     this.http.get<Result[]>("api/result").subscribe(
@@ -23,7 +23,7 @@ export class ListResultsComponent implements OnInit {
   }
 
   visualizeResult(index: number) {
-    this.visializeResultEmitter.emit(this.results[index]);
+    this.visualizeResultEmitter.emit(this.results[index]);
   }
 
   deleteResult(index: number) {

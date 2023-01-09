@@ -41,6 +41,33 @@
 
 .summary{
   display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 8px;
+  width: 100%;
+}
+
+.box {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
-  padding: 8px;
+}
+
+.big-chart{
+  width: 100%;
+}
+
+.summary-box{
+  width: 400px;
+
+}
+
+.summary-line{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 10px 0;
 }

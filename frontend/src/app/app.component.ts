@@ -10,6 +10,7 @@ export class AppComponent {
 
   result!: Result
   ready: boolean = false;
+  results!: Result[];
 
   setResult(result: Result) {
     console.log("xd");

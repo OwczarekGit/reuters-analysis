@@ -1,29 +1,54 @@
-<div *ngIf="!ready" class="spinner"></div>
-<div *ngIf="ready" class="visualization">
+<div class="wrapper">
+  <div *ngIf="!ready" class="spinner"></div>
+  <div *ngIf="ready" class="visualization">
+    <div class="box">
+      <div class="summary">
+        <div class="summary-box flex flex-col">
+          <p class="title">Result Visualization</p>
+          <div class="summary-line"> <div>K:                   </div> {{result.k}}</div>
+          <div class="summary-line"> <div>Ratio:               </div> {{result.splitRatio}}</div>
+            <div class="summary-line"><div>Algorithm:          </div> {{result.algorithm | uppercase}}</div>
+            <div class="summary-line"><div>Accuracy:           </div> {{result.accuracy | percent}}</div>
+            <div class="summary-line"><div>Testing Slice Size: </div> {{result.testingSliceSize}}</div>
+            <div class="summary-line"><div>Training Slice Size:</div> {{result.trainingSliceSize}}</div>
+        </div>
 
-  <div class="summary">
-    <p>K = {{result.k}}</p>
-    <p>Ratio = {{result.splitRatio}}</p>
-    <p>Algorithm = {{result.algorithm}}</p>
-    <p>Accuracy = {{result.accuracy}}</p>
-    <p>Testing Slice Size = {{result.testingSliceSize}}</p>
-    <p>Training Slice Size = {{result.trainingSliceSize}}</p>
+        <div>
+          <google-chart
+            [type]="ratioChartType"
+            [width]="400/1"
+            [height]="400/1"
+            title="Ratio: {{result.splitRatio}}"
+            [data]="[['Training Size', result.trainingSliceSize],['Testing Size', result.testingSliceSize]]"
+          ></google-chart>
+        </div>
+
+        <div>
+          <google-chart
+            [type]="ratioChartType"
+            [width]="400/1"
+            [height]="400/1"
+            title="Accuracy: {{result.accuracy | percent}}"
+            [data]="[
+              ['Classified Correctly', (result.testingSliceSize * result.accuracy)],
+              ['Classified Incorrectly', (result.testingSliceSize * (1.0 - result.accuracy))]
+            ]"
+          ></google-chart>
+        </div>
+      </div>
+
+      <div class="big-chart">
+        <google-chart
+
+          style="width: 100%;"
+          [type]="objectsChartType"
+          [height]="(400/1)"
+          title="test"
+          [options]="options"
+          [data]="objectData"
+          [columns]="columns"
+        ></google-chart>
+      </div>
+    </div>
   </div>
-
-  <google-chart
-    [type]="ratioChartType"
-    [width]="400/1"
-    [height]="400/1"
-    title="Ratio: {{result.splitRatio}}"
-    [data]="[['Training Size', result.trainingSliceSize],['Testing Size', result.testingSliceSize]]"
-  ></google-chart>
-
-  <google-chart
-    [type]="chartType"
-    [width]="(400/1)"
-    [height]="(400/1)"
-    title="test"
-    [data]="rows"
-    [columns]="columns"
-  ></google-chart>
 </div>

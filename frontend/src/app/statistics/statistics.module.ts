@@ -4,17 +4,20 @@ import { ResultVisualizationComponent } from './result-visualization/result-visu
 import {SharedModule} from "../shared/shared.module";
 import {GoogleChartsModule} from "angular-google-charts";
 import { ListResultsComponent } from './list-results/list-results.component';
+import { MultipleResultVisualizationComponent } from './multiple-result-visualization/multiple-result-visualization.component';
 
 
 
 @NgModule({
   declarations: [
     ResultVisualizationComponent,
-    ListResultsComponent
+    ListResultsComponent,
+    MultipleResultVisualizationComponent
   ],
   exports: [
     ResultVisualizationComponent,
-    ListResultsComponent
+    ListResultsComponent,
+    MultipleResultVisualizationComponent
   ],
   imports: [
     CommonModule,
