@@ -1,6 +1,7 @@
 package org.example;
 
 import lombok.RequiredArgsConstructor;
+import org.example.entity.Result;
 import org.example.execution.ExecutionService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ExecutionController {
     private final ExecutionService service;
     @PostMapping
-    public void executeClassification(@RequestBody ClassificationParameters classificationParameters) {
-        service.executeSingleSimulation(classificationParameters);
+    public Result executeClassification(@RequestBody ClassificationParameters classificationParameters) {
+        return service.executeSingleSimulation(classificationParameters);
     }
 }

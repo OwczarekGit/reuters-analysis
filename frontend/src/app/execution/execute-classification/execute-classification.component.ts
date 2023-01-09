@@ -2,7 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {ClassificationParameters} from "../classification-parameters";
-import {Result} from "../result";
+import {Result} from "../../shared/result";
 
 @Component({
   selector: 'app-execute-classification',

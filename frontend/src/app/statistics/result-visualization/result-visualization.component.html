@@ -1,1 +1,28 @@
-<p>result-visualization works!</p>
+<div *ngIf="!ready" class="spinner"></div>
+<div *ngIf="ready" class="visualization">
+
+  <div class="summary">
+    <p>K = {{result.k}}</p>
+    <p>Ratio = {{result.splitRatio}}</p>
+    <p>Algorithm = {{result.algorithm}}</p>
+    <p>Accuracy = {{result.accuracy}}</p>
+    <p>Testing Slice Size = {{result.testingSliceSize}}</p>
+    <p>Training Slice Size = {{result.trainingSliceSize}}</p>
+  </div>
+
+  <google-chart
+    [type]="ratioChartType"
+    [width]="400/1"
+    [height]="400/1"
+    title="Ratio: {{result.splitRatio}}"
+    [data]="[['Training Size', result.trainingSliceSize],['Testing Size', result.testingSliceSize]]"
+  ></google-chart>
+
+  <google-chart
+    [type]="chartType"
+    [width]="(400/1)"
+    [height]="(400/1)"
+    title="test"
+    [data]="rows"
+  ></google-chart>
+</div>

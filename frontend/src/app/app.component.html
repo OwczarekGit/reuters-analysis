@@ -1,1 +1,2 @@
-<app-execute-classification></app-execute-classification>
+<app-execute-classification (classificationResult)="setResult($event)"></app-execute-classification>
+<app-result-visualization [result]="result" [ready]="ready"></app-result-visualization>

@@ -6,6 +6,7 @@ import org.example.entity.ClassificationObjectStatistics;
 import org.example.entity.Result;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -17,8 +18,8 @@ public class ExecutionService {
 
     private final ResultRepository resultRepository;
 
-    public void executeSingleSimulation(ClassificationParameters params) {
-
+    public Result executeSingleSimulation(ClassificationParameters params) {
+        System.out.println(params.getRatio());
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(7);
         threadPoolExecutor.submit(new SingleClassifierExecution(
                 params.getK(),
@@ -33,7 +34,8 @@ public class ExecutionService {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        processResults();
+        return processSingle();
+
     }
 
     public void executeMultipleSimulations(List<ClassificationParameters> paramsList, String dataPath) {
@@ -98,9 +100,39 @@ public class ExecutionService {
             result.setSplitRatio(resultDto.getSplit_ratio());
             result.setTestingSliceSize(resultDto.getTesting_slice_size());
             result.setTrainingSliceSize(resultDto.getTraining_slice_size());
-
+            result.setCreationDate(LocalDateTime.now());
+            ResultService.getResults().clear();
             resultRepository.save(result);
         });
+    }
+
+    private Result processSingle() {
+
+        ResultDto resultDto = ResultService.getResults().get(0);
+
+            List<ClassificationObjectStatistics> objectStatistics = resultDto.getPrecisions().entrySet().stream()
+                    .map((entry) -> {
+                        ClassificationObjectStatistics stats = new ClassificationObjectStatistics();
+                        stats.setObjectName(entry.getKey());
+                        stats.setPrecision(entry.getValue().doubleValue());
+                        stats.setRecall(resultDto.getRecall().get(entry.getKey()).doubleValue());
+                        stats.setFallout(resultDto.getFallout().get(entry.getKey()).doubleValue());
+                        return stats;
+                    })
+                    .toList();
+
+            Result result = new Result();
+            result.setAlgorithm(resultDto.getAlgorithm().getValue());
+            result.setObjectStatistics(objectStatistics);
+            result.setAccuracy(resultDto.getAccuracy());
+            result.setK(resultDto.getK());
+            result.setSplitRatio(resultDto.getSplit_ratio());
+            result.setTestingSliceSize(resultDto.getTesting_slice_size());
+            result.setTrainingSliceSize(resultDto.getTraining_slice_size());
+            result.setCreationDate(LocalDateTime.now());
+            ResultService.getResults().clear();
+            return resultRepository.save(result);
+
     }
 
 }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {Result} from "./shared/result";
 
 @Component({
   selector: 'app-root',
@@ -6,4 +7,17 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+  result!: Result
+  ready: boolean = false;
+
+  setResult(result: Result) {
+    console.log("xd");
+    this.result = result;
+    setTimeout(
+      () => {this.ready = true;},
+      20
+    );
+
+  }
 }
