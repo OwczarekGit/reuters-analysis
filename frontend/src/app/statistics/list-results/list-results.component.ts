@@ -29,6 +29,7 @@ export class ListResultsComponent implements OnInit {
       results => this.results = results
     );
   }
+  activeIndex: number = -1;
 
   ngOnInit(): void {
   }
@@ -42,9 +43,19 @@ export class ListResultsComponent implements OnInit {
 
   deleteResult(index: number) {
    this.resultService.deleteResult(index);
+   this.activeIndex = -1;
   }
 
   refresh() {
     this.resultService.loadData();
+  }
+
+  setActive(index: number) {
+    if(index === this.activeIndex) {
+      this.activeIndex = -1;
+    } else {
+      this.activeIndex = index;
+    }
+
   }
 }

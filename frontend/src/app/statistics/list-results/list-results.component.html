@@ -10,6 +10,8 @@
         [result]="result"
         (visualize)="visualizeResult(i)"
         (delete)="deleteResult(i)"
+        (click)="setActive(i)"
+        [active]="activeIndex == i"
       ></app-result-list-entry>
     </li>
   </ul>

@@ -13,6 +13,14 @@
   transition: all .5s ease-in-out 0s;
   background-color: #fff;
 }
+.box-wrapper {
+  transition: all .5s ease-in-out 0s;
+}
+
+.active {
+  border: 1px solid var(--google-blue);
+  outline: 1px solid var(--google-blue);
+}
 
 .date-box{
   width: 80px;
@@ -28,11 +36,17 @@
   flex-direction: column;
 }
 
+.active-date{
+  border: 1px solid var(--google-blue);
+  outline: 1px solid var(--google-blue);
+}
+
 .algorithm{
   text-align: center;
   text-transform: capitalize;
   font-size: 14px;
   font-style: italic;
+  font-weight: bold;
 }
 
 .k{
@@ -49,10 +63,13 @@
   border-radius: 50%;
   border: 3px solid #ccc;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   cursor: default;
   transition: all .2s ease-in-out 0s;
+}
+.green {
+  color: var(--google-green);
 }
 
 .k-circle > span {
@@ -76,8 +93,39 @@
 
 .accuracy{
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 4px;
 }
 
+.ratio{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  gap: 4px;
+  position: relative;
+}
+
+.ratio::before{
+  content: 'Ratio';
+  font-size: 9px;
+  position: absolute;
+  top: -8px;
+  z-index: 1;
+}
+
+.ratio > span {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.ratio  div{
+}
+
+.data-amount{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+}

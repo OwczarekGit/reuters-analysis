@@ -9,6 +9,8 @@ export class AccuracyIconComponent implements OnInit {
 
   @Input("showBorder")
   showBorder: boolean = false;
+  @Input("active")
+  active: boolean = false;
   constructor() { }
 
   ngOnInit(): void {

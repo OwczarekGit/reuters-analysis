@@ -1,29 +1,67 @@
-<div #box class="box">
-  <div class="date-box flex">
-    <div>{{result.creationDate | date: "hh:mm" }}</div>
-    <div>{{result.creationDate | date: "dd.MM.YYYY " }}</div>
+<div #box class="box-wrapper">
+  <div *ngIf="!active" class="box">
+    <div class="date-box flex">
+      <div>{{result.creationDate | date: "hh:mm" }}</div>
+      <div>{{result.creationDate | date: "dd.MM.YYYY " }}</div>
+    </div>
+
+    <div class="algorithm flex">
+      {{result.algorithm | lowercase}}
+    </div>
+
+    <div class="k flex">
+      <k-icon [active]="active"></k-icon>
+      {{result.k}}
+    </div>
+
+    <div class="ratio flex">
+      <div>{{(1.0 - result.splitRatio) | percent}}</div>
+      <span>/</span>
+      <div>{{result.splitRatio | percent}}</div>
+    </div>
+
+    <div class="accuracy">
+      <accuracy-icon [active]="active" ></accuracy-icon>
+      {{result.accuracy | percent:'1.2'}}
+    </div>
+    <div class="data-amount flex">
+      <flask-icon [active]="active" [ratio]="result.splitRatio"></flask-icon>
+      {{result.testingSliceSize + result.trainingSliceSize}}
+    </div>
+    <chart-icon [active]='active' title="Visualize Result" (click)="visualize()"></chart-icon>
+    <trash-icon title="Delete Result" (click)="delete()"></trash-icon>
   </div>
 
-  <div class="algorithm flex">
-    {{result.algorithm | lowercase}}
-  </div>
+  <div *ngIf="active" class="box active">
+    <div class="date-box flex active-date">
+      <div>{{result.creationDate | date: "hh:mm" }}</div>
+      <div>{{result.creationDate | date: "dd.MM.YYYY " }}</div>
+    </div>
 
-  <div class="k flex">
-    <div class="k-circle"><span>K</span></div>
-    {{result.k}}
-  </div>
+    <div class="algorithm flex green">
+      {{result.algorithm | lowercase}}
+    </div>
 
-  <div class="ratio flex">
-    {{result.splitRatio}}
-  </div>
+    <div class="k flex">
+      <k-icon [active]="active"></k-icon>
+      {{result.k}}
+    </div>
 
-  <div class="accuracy">
-    <accuracy-icon></accuracy-icon>
-    {{result.accuracy | percent:'1.2'}}
+    <div class="ratio flex">
+      <div>{{(1.0 - result.splitRatio) | percent}}</div>
+      <span>/</span>
+      <div>{{result.splitRatio | percent}}</div>
+    </div>
+
+    <div class="accuracy">
+      <accuracy-icon [active]="active" ></accuracy-icon>
+      {{result.accuracy | percent:'1.2'}}
+    </div>
+    <div class="data-amount flex">
+      <flask-icon [active]="active" [ratio]="result.splitRatio"></flask-icon>
+      {{result.testingSliceSize + result.trainingSliceSize}}
+    </div>
+    <chart-icon [active]='active' title="Visualize Result" (click)="visualize()"></chart-icon>
+    <trash-icon title="Delete Result" (click)="delete()"></trash-icon>
   </div>
-  <div class="data-amount flex">
-    {{result.testingSliceSize + result.trainingSliceSize}}
-  </div>
-  <chart-icon title="Visualize Result" (click)="visualize()"></chart-icon>
-  <trash-icon title="Visualize Result" (click)="delete()"></trash-icon>
 </div>

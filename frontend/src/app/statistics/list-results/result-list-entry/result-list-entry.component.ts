@@ -19,6 +19,8 @@ export class ResultListEntryComponent implements OnInit, OnDestroy {
 
   @ViewChild("box")
   box!: ElementRef<HTMLElement>
+  @Input("active")
+  active: boolean = false;
 
   constructor() { }
 

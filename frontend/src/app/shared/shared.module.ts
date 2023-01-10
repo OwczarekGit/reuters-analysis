@@ -9,6 +9,7 @@ import { ListIconComponent } from './list-icon/list-icon.component';
 import { LightningIconComponent } from './lightning-icon/lightning-icon.component';
 import { Chart2IconComponent } from './chart2-icon/chart2-icon.component';
 import { TrashIconComponent } from './trash-icon/trash-icon.component';
+import { FlaskIconComponent } from './flask-icon/flask-icon.component';
 
 
 
@@ -22,7 +23,8 @@ import { TrashIconComponent } from './trash-icon/trash-icon.component';
         ListIconComponent,
         LightningIconComponent,
         Chart2IconComponent,
-        TrashIconComponent
+        TrashIconComponent,
+        FlaskIconComponent
     ],
   exports: [
     ChartIconComponent,
@@ -33,7 +35,8 @@ import { TrashIconComponent } from './trash-icon/trash-icon.component';
     ListIconComponent,
     LightningIconComponent,
     Chart2IconComponent,
-    TrashIconComponent
+    TrashIconComponent,
+    FlaskIconComponent
   ],
     imports: [
         CommonModule

@@ -4,16 +4,19 @@
     <div class="spinner"></div>
   </div>
   <div *ngIf="visualizationService.singleClassificationVisualizationReady" class="visualization">
+
     <div class="box">
+
       <div class="summary">
+
         <div class="summary-box flex flex-col">
           <p class="title">Result Visualization</p>
-          <div class="summary-line"> <div>K:                   </div> {{result.k}}</div>
-          <div class="summary-line"> <div>Ratio:               </div> {{result.splitRatio}}</div>
-            <div class="summary-line"><div>Algorithm:          </div> {{result.algorithm | uppercase}}</div>
-            <div class="summary-line"><div>Accuracy:           </div> {{result.accuracy | percent}}</div>
-            <div class="summary-line"><div>Testing Slice Size: </div> {{result.testingSliceSize}}</div>
-            <div class="summary-line"><div>Training Slice Size:</div> {{result.trainingSliceSize}}</div>
+          <div class="summary-line"> <div>K:                 </div> {{result.k}}</div>
+          <div class="summary-line"> <div>Ratio:             </div> {{result.splitRatio}}</div>
+          <div class="summary-line"><div>Algorithm:          </div> {{result.algorithm | uppercase}}</div>
+          <div class="summary-line"><div>Accuracy:           </div> {{result.accuracy | percent}}</div>
+          <div class="summary-line"><div>Testing Slice Size: </div> {{result.testingSliceSize}}</div>
+          <div class="summary-line"><div>Training Slice Size:</div> {{result.trainingSliceSize}}</div>
         </div>
 
         <div>
@@ -41,10 +44,7 @@
       </div>
 
       <div class="big-chart">
-        <div class="big-chart-box flex flex-col">
-
           <google-chart
-
             style="width: 100%;"
             [type]="objectsChartType"
             [height]="(400/1)"
@@ -53,8 +53,8 @@
             [data]="objectData"
             [columns]="columns"
           ></google-chart>
-        </div>
       </div>
     </div>
+
   </div>
 </div>

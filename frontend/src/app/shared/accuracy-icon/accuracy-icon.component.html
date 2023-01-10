@@ -1,11 +1,25 @@
-<div *ngIf="showBorder" class="border">
+<div *ngIf="showBorder &&active" class="border active">
   <div class="accuracy-icon">
     <div class="ring-1">
       <div class="ring-2"></div>
     </div>
   </div>
 </div>
-<div *ngIf="!showBorder" class="border border-transparent">
+<div *ngIf="showBorder &&!active" class="border">
+  <div class="accuracy-icon">
+    <div class="ring-1">
+      <div class="ring-2"></div>
+    </div>
+  </div>
+</div>
+<div *ngIf="!showBorder&&active" class="border active border-transparent">
+  <div class="accuracy-icon">
+    <div class="ring-1">
+      <div class="ring-2"></div>
+    </div>
+  </div>
+</div>
+<div *ngIf="!showBorder&&!active" class="border border-transparent">
   <div class="accuracy-icon">
     <div class="ring-1">
       <div class="ring-2"></div>

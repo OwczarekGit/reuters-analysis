@@ -1,0 +1,14 @@
+<div *ngIf="!active" class="box border-transparent">
+  <div class="flask-top"></div>
+  <div class="flask-middle"></div>
+  <div class="flask-bottom">
+    <div class="flask-level" [ngStyle]="{'height': ratio | percent}"></div>
+  </div>
+</div>
+<div *ngIf="active" class="box active border-transparent">
+  <div class="flask-top"></div>
+  <div class="flask-middle"></div>
+  <div class="flask-bottom">
+    <div  #flask_level class="flask-level" [ngStyle]="{'height': ratio | percent}"></div>
+  </div>
+</div>

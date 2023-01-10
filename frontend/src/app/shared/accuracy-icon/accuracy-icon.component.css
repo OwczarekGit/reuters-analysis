@@ -8,17 +8,17 @@
   align-items: center;
 }
 
-.border:hover{
+.border.active, .border:hover{
   border: 2px solid #1a8840;
   cursor: pointer;
 }
 
-.border-transparent{
+.border.border-transparent {
   border: 2px solid transparent;
 
 }
 
-.border-transparent:hover{
+.border.border-transparent:hover, .border.border-transparent.active{
   border: 2px solid transparent;
   cursor: default;
 }
@@ -51,14 +51,14 @@
   border-radius: 50%;
 }
 
-.accuracy-icon:hover {
+.accuracy-icon:hover, .border.active .accuracy-icon {
   border: 3px solid  rgb(66, 133, 244);
 }
 
-.accuracy-icon:hover .ring-1 {
+.border.active .accuracy-icon .ring-1, .accuracy-icon:hover .ring-1 {
   border: 2px solid rgb(219, 68, 55);
 }
 
-.accuracy-icon:hover .ring-2 {
+.border.active .accuracy-icon .ring-2, .accuracy-icon:hover .ring-2 {
   background-color:rgb(244, 180, 0);
 }
