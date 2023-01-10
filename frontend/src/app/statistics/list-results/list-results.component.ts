@@ -1,6 +1,10 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Result} from "../../shared/result";
 import {HttpClient} from "@angular/common/http";
+import {ResultService} from "../../shared/result.service";
+import {VisualizationService} from "../../shared/visualization.service";
+import {Router} from "@angular/router";
+import {NavigationEntry, NavigationService} from "../../shared/navigation.service";
 
 @Component({
   selector: 'app-list-results',
@@ -13,8 +17,15 @@ export class ListResultsComponent implements OnInit {
   @Output("visualizeResult")
   visualizeResultEmitter: EventEmitter<Result> = new EventEmitter<Result>();
 
-  constructor(private http: HttpClient) {
-    this.http.get<Result[]>("api/result").subscribe(
+  constructor(
+    private http: HttpClient,
+    private resultService: ResultService,
+    private visualizationService: VisualizationService,
+    private navigationService: NavigationService,
+    private router: Router
+  ) {
+    this.navigationService.setActiveEntry(NavigationEntry.LIST_RESULTS);
+    this.resultService.resultsSubject.subscribe(
       results => this.results = results
     );
   }
@@ -23,18 +34,17 @@ export class ListResultsComponent implements OnInit {
   }
 
   visualizeResult(index: number) {
-    this.visualizeResultEmitter.emit(this.results[index]);
+    this.visualizationService.markSingleVisualizationAsUnready();
+    this.router.navigate(["visualize"]);
+    this.navigationService.setActiveEntry(NavigationEntry.CLASSIFICATION_VISUALIZER);
+    this.visualizationService.setSingleClassificationData(this.results[index]);
   }
 
   deleteResult(index: number) {
-    this.http.delete(`api/result/${this.results[index].id}`).subscribe(
-      () => this.results.splice(index, 1)
-    );
+   this.resultService.deleteResult(index);
   }
 
   refresh() {
-    this.http.get<Result[]>("api/result").subscribe(
-      results => this.results = results
-    );
+    this.resultService.loadData();
   }
 }

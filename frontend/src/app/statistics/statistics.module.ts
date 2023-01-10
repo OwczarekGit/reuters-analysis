@@ -5,6 +5,7 @@ import {SharedModule} from "../shared/shared.module";
 import {GoogleChartsModule} from "angular-google-charts";
 import { ListResultsComponent } from './list-results/list-results.component';
 import { MultipleResultVisualizationComponent } from './multiple-result-visualization/multiple-result-visualization.component';
+import { ResultListEntryComponent } from './list-results/result-list-entry/result-list-entry.component';
 
 
 
@@ -12,7 +13,8 @@ import { MultipleResultVisualizationComponent } from './multiple-result-visualiz
   declarations: [
     ResultVisualizationComponent,
     ListResultsComponent,
-    MultipleResultVisualizationComponent
+    MultipleResultVisualizationComponent,
+    ResultListEntryComponent
   ],
   exports: [
     ResultVisualizationComponent,

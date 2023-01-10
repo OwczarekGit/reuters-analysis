@@ -1,0 +1,64 @@
+.border{
+  width: 32px;
+  height: 32px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.border:hover{
+  border: 2px solid #1a8840;
+  cursor: pointer;
+}
+
+.border-transparent{
+  border: 2px solid transparent;
+
+}
+
+.border-transparent:hover{
+  border: 2px solid transparent;
+  cursor: default;
+}
+
+.accuracy-icon{
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all .2s ease-in-out 0s;
+}
+
+.ring-1{
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ring-2{
+  width: 4px;
+  height: 4px;
+  background-color: #bbb;
+  border-radius: 50%;
+}
+
+.accuracy-icon:hover {
+  border: 3px solid  rgb(66, 133, 244);
+}
+
+.accuracy-icon:hover .ring-1 {
+  border: 2px solid rgb(219, 68, 55);
+}
+
+.accuracy-icon:hover .ring-2 {
+  background-color:rgb(244, 180, 0);
+}

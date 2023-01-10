@@ -1,13 +1,16 @@
 <div class="wrapper">
-  <p class="title">All Results</p>
-  <button (click)="refresh()">Refresh list</button>
-  <div class="box" *ngFor="let result of results; index as i">
-    <div>Creation Date: {{result.creationDate}}</div>
-    <div>ID: {{result.id}}</div>
-    <div>K: {{result.k}}</div>
-    <div>Algorithm: {{result.algorithm | uppercase}}</div>
-    <div>Split Ratio: {{result.splitRatio}}</div>
-    <button (click)="visualizeResult(i)" >Visualize</button>
-    <button class="button-red" (click)="deleteResult(i)" >Delete</button>
+  <div class="result-list-title flex flex-row">
+    <p class="title">All Results</p>
+    <refresh-icon (click)="refresh()"></refresh-icon>
   </div>
+
+  <ul class="result-list">
+    <li *ngFor="let result of results; index as i" class="result-entry">
+      <app-result-list-entry
+        [result]="result"
+        (visualize)="visualizeResult(i)"
+        (delete)="deleteResult(i)"
+      ></app-result-list-entry>
+    </li>
+  </ul>
 </div>

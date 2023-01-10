@@ -1,0 +1,37 @@
+<div class="box">
+  <div *ngIf="activeEntry == enum.LIST_RESULTS" class="active navigation-element wrapper " (click)="listResults()">
+    <list-icon [active]="activeEntry == enum.LIST_RESULTS"></list-icon>
+    Result
+  </div>
+
+  <div *ngIf="!(activeEntry == enum.LIST_RESULTS)" class="navigation-element wrapper" (click)="listResults()">
+    <list-icon></list-icon>
+    Results
+  </div>
+  <div *ngIf="activeEntry == enum.CLASSIFICATION_VISUALIZER" class="navigation-element wrapper active" (click)="classificationVisualizer()">
+    <chart-icon [active]="activeEntry == enum.CLASSIFICATION_VISUALIZER" ></chart-icon>
+    <!--  Single Classification Visualizer-->
+    Visualizer
+  </div>
+  <div *ngIf="!(activeEntry == enum.CLASSIFICATION_VISUALIZER)" class="navigation-element wrapper" (click)="classificationVisualizer()">
+    <chart-icon></chart-icon>
+    <!--  Single Classification Visualizer-->
+    Visualizer
+  </div>
+  <div *ngIf="activeEntry == enum.MULTIPLE_CLASSIFICATION_VISUALIZER" class="navigation-element wrapper active" (click)="multipleClassificationVisualizer()">
+    <chart2-icon [active]="activeEntry == enum.MULTIPLE_CLASSIFICATION_VISUALIZER"></chart2-icon>
+    MultiVisualizer
+  </div>
+  <div *ngIf="!(activeEntry == enum.MULTIPLE_CLASSIFICATION_VISUALIZER)" class="navigation-element wrapper" (click)="multipleClassificationVisualizer()">
+    <chart2-icon></chart2-icon>
+    MultiVisualizer
+  </div>
+  <div *ngIf="activeEntry == enum.EXECUTE_CLASSIFICATION" class="navigation-element wrapper active" (click)="executeClassification()">
+    <lightning-icon [active]="activeEntry == enum.EXECUTE_CLASSIFICATION"></lightning-icon>
+    Classify
+  </div>
+  <div *ngIf="!(activeEntry == enum.EXECUTE_CLASSIFICATION)" class="navigation-element wrapper" (click)="executeClassification()">
+    <lightning-icon></lightning-icon>
+    Classify
+  </div>
+</div>

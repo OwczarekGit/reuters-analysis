@@ -1,0 +1,45 @@
+.box{
+  border-radius: 6px;
+  border: 2px solid #ccc;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  transition: all .2s ease-in-out 0s;
+}
+
+.box:hover .circle, .box.active .circle{
+  border: 3px solid #1a8840;
+}
+
+.box:hover, .box.active{
+  border: 3px solid #1a8840;
+}
+
+.box:hover .arrow, .box.active .arrow{
+  background-color: #1a8840;
+}
+
+.circle{
+  width: 24px;
+  height: 24px;
+  border: 3px solid #ccc;
+  border-radius: 50%;
+  clip-path: polygon(0 0, 100% 0, 100% 10%, 50% 50%, 100% 60%, 100% 100%, 0 100%);
+  transition: all .2s ease-in-out 0s;
+}
+
+.arrow{
+  width: 8px;
+  height: 10px;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  background-color: #ccc;
+  position: absolute;
+  top: 5px;
+  left: 68%;
+  transform: rotateZ(58deg);
+  transition: all .2s ease-in-out 0s;
+}

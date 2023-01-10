@@ -1,0 +1,57 @@
+.icon-chart{
+  width: 32px;
+  height: 32px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.icon-chart > div {
+  width: 80%;
+  height: 80%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.icon-chart > div > div {
+  width: 8px;
+  transition: all .2s ease-in-out 0s;
+}
+
+.chart-1{
+  height: 90%;
+  background-color: #ccc;
+}
+
+.chart-2{
+  height: 40%;
+  background-color: #aaa;
+}
+
+.chart-3{
+  height: 70%;
+  background-color: #ddd;
+}
+
+.icon-chart:hover, .active.icon-chart{
+  border: 2px solid #1a8840;
+}
+
+.icon-chart:hover .chart-1, .active.icon-chart .chart-1 {
+  background-color: rgb(66, 133, 244);
+  height: 40%;
+}
+.icon-chart:hover .chart-2 , .active.icon-chart .chart-2 {
+  background-color: rgb(219, 68, 55);
+  height: 70%;
+}
+.icon-chart:hover .chart-3, .active.icon-chart .chart-3 {
+  background-color: rgb(244, 180, 0);
+  height: 90%;
+}

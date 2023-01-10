@@ -1,0 +1,29 @@
+<div #box class="box">
+  <div class="date-box flex">
+    <div>{{result.creationDate | date: "hh:mm" }}</div>
+    <div>{{result.creationDate | date: "dd.MM.YYYY " }}</div>
+  </div>
+
+  <div class="algorithm flex">
+    {{result.algorithm | lowercase}}
+  </div>
+
+  <div class="k flex">
+    <div class="k-circle"><span>K</span></div>
+    {{result.k}}
+  </div>
+
+  <div class="ratio flex">
+    {{result.splitRatio}}
+  </div>
+
+  <div class="accuracy">
+    <accuracy-icon></accuracy-icon>
+    {{result.accuracy | percent:'1.2'}}
+  </div>
+  <div class="data-amount flex">
+    {{result.testingSliceSize + result.trainingSliceSize}}
+  </div>
+  <chart-icon title="Visualize Result" (click)="visualize()"></chart-icon>
+  <trash-icon title="Visualize Result" (click)="delete()"></trash-icon>
+</div>

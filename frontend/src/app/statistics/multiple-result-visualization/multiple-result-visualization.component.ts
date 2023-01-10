@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Result} from "../../shared/result";
+import {Component, OnInit} from '@angular/core';
+import {NavigationEntry, NavigationService} from "../../shared/navigation.service";
 
 @Component({
   selector: 'app-multiple-result-visualization',
@@ -9,9 +9,9 @@ import {Result} from "../../shared/result";
 export class MultipleResultVisualizationComponent implements OnInit {
 
 
-  @Input("results")
-  results!: Result[];
-  constructor() { }
+  constructor(private navigationService: NavigationService) {
+    this.navigationService.setActiveEntry(NavigationEntry.MULTIPLE_CLASSIFICATION_VISUALIZER);
+  }
 
   ngOnInit(): void {
   }

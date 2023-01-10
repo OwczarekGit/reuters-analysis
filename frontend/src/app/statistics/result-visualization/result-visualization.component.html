@@ -1,6 +1,9 @@
 <div class="wrapper">
-  <div *ngIf="!ready" class="spinner"></div>
-  <div *ngIf="ready" class="visualization">
+  <div *ngIf="!visualizationService.singleClassificationVisualizationReady" class="not-ready">
+    <p>Visualizing...</p>
+    <div class="spinner"></div>
+  </div>
+  <div *ngIf="visualizationService.singleClassificationVisualizationReady" class="visualization">
     <div class="box">
       <div class="summary">
         <div class="summary-box flex flex-col">
@@ -38,16 +41,19 @@
       </div>
 
       <div class="big-chart">
-        <google-chart
+        <div class="big-chart-box flex flex-col">
 
-          style="width: 100%;"
-          [type]="objectsChartType"
-          [height]="(400/1)"
-          title="test"
-          [options]="options"
-          [data]="objectData"
-          [columns]="columns"
-        ></google-chart>
+          <google-chart
+
+            style="width: 100%;"
+            [type]="objectsChartType"
+            [height]="(400/1)"
+            title="test"
+            [options]="options"
+            [data]="objectData"
+            [columns]="columns"
+          ></google-chart>
+        </div>
       </div>
     </div>
   </div>
