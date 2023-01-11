@@ -3,13 +3,20 @@ package org.example;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.io.IOException;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SingleClassifierExecution implements Runnable{
+
+    @Value("working-directory-path")
+    private static String workingDirectoryPath;
+    @Value("classifier-path")
+    private static String classifierPath;
 
     private final Integer k;
     private final Double ratio;
@@ -22,13 +29,13 @@ public class SingleClassifierExecution implements Runnable{
 
     void classify() {
         ProcessBuilder processBuilder = new ProcessBuilder(
-                "/home/kacper/Documents/reuters-analysis/classifier/target/release/analiza-danych",
+                classifierPath,
                 dataPath,
                 "-k", k.toString(),
                 "-r", ratio.toString(),
                 "-a", algorithm.getValue()
         );
-        processBuilder.directory(new File("/home/kacper/Documents/reuters-analysis/classifier"));
+        processBuilder.directory(new File(workingDirectoryPath));
         try {
             Process p = processBuilder.start();
             Utils.getOutput(

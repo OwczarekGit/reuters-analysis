@@ -13,3 +13,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format-sql: true
       show-sql: true
+
+thread-count: 7
+working-directory-path: "xd"
+classifier-path: "xd"
+data-folder: "test-data"

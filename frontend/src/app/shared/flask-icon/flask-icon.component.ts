@@ -9,8 +9,8 @@ export class FlaskIconComponent implements OnInit, AfterViewInit {
   @Input('active')
   active: boolean = false
 
-  @Input("ratio")
-  ratio!: number
+  @Input("fill")
+  fill!: number
   constructor() { }
 
   ngOnInit(): void {

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.*;
 import org.example.entity.ClassificationObjectStatistics;
 import org.example.entity.Result;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -11,20 +12,26 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ExecutionService {
 
+    @Value("thread-count")
+    private static int threadCount;
+    @Value("data-folder")
+    private static String dataFolder;
+
     private final ResultRepository resultRepository;
 
     public Result executeSingleSimulation(ClassificationParameters params) {
         System.out.println(params.getRatio());
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(7);
+        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadCount);
         threadPoolExecutor.submit(new SingleClassifierExecution(
                 params.getK(),
                 params.getRatio(),
-                "test-data",
+                dataFolder,
                 false,
                 params.getAlgorithm()
         ));
@@ -64,9 +71,9 @@ public class ExecutionService {
 //                        Algorithm.CHEBYSHEV,
 //                        Algorithm.EUCLIDEAN
                 ),
-                "test-data"
+                dataFolder
         );
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(7);
+        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadCount);
         taskGenerationService.generateTasks().forEach(threadPoolExecutor::submit);
         threadPoolExecutor.shutdown();
         try {
@@ -90,7 +97,7 @@ public class ExecutionService {
                         stats.setFallout(resultDto.getFallout().get(entry.getKey()).doubleValue());
                         return stats;
                     })
-                    .toList();
+                    .collect(Collectors.toList());
 
             Result result = new Result();
             result.setAlgorithm(resultDto.getAlgorithm().getValue());
@@ -119,7 +126,7 @@ public class ExecutionService {
                         stats.setFallout(resultDto.getFallout().get(entry.getKey()).doubleValue());
                         return stats;
                     })
-                    .toList();
+                    .collect(Collectors.toList());
 
             Result result = new Result();
             result.setAlgorithm(resultDto.getAlgorithm().getValue());

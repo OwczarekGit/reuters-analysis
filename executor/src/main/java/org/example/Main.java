@@ -40,7 +40,7 @@ public class Main implements ApplicationRunner {
                         stats.setFallout(resultDto.getFallout().get(entry.getKey()).doubleValue());
                         return stats;
                     })
-                    .toList();
+                    .collect(Collectors.toList());
 
             Result result = new Result();
             result.setAlgorithm(resultDto.getAlgorithm().getValue());

@@ -54,7 +54,7 @@ fn main() {
 
     let mut all_articles = vec![];
     for article in get_articles_from_sgm(config.directory.as_str()) {
-        if article.places.len() == 1 && searched.contains(&article.places[0]) {
+        if article.places.len() == 1 {
             all_articles.push(article)
         }
     }
