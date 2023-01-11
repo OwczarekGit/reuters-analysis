@@ -11,16 +11,17 @@
   transition: all .2s ease-in-out 0s;
 }
 
-.box:hover .circle, .box.active .circle{
-  border: 3px solid #1a8840;
-}
 
 .box:hover, .box.active{
-  border: 3px solid #1a8840;
+  border: 2px solid #1a8840;
 }
 
 .box:hover .arrow, .box.active .arrow{
-  background-color: #1a8840;
+  background-color: var(--google-yellow);
+}
+
+.box:hover .circle, .box.active .circle{
+  border: 3px solid var(--google-yellow);
 }
 
 .circle{
