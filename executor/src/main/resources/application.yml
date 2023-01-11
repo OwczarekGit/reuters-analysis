@@ -15,7 +15,7 @@ spring:
       show-sql: true
 
 config:
-  thread-count: 11
-  working-directory-path: "/home/czarek/Desktop/analiza-danych/classifier"
-  classifier-path: "/home/czarek/Desktop/analiza-danych/classifier/target/release/analiza-danych"
-  data-folder: "reuters"
+  thread-count: <CPUS>
+  working-directory-path: "<WD_PATH>"
+  classifier-path: "<CLASSIFIER>"
+  data-folder: "<DATA>"
