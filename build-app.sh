@@ -48,9 +48,12 @@ generate_config(){
   WD_PATH="$ROOT/$CLASSIFIER_DIR"
   CLASSIFIER="$ROOT/$CLASSIFIER_DIR/target/release/analiza-danych"
   DATA="$ROOT/$CLASSIFIER_DIR/reuters"
-  sed -i 's/<CPUS>/$CPUS/' application.yml
-  sed -i 's/<WD_PATH>/$WD_PATH/' application.yml
-  sed -i 's/<DATA>/$DATA/' application.yml
+
+  sed -i "s|<CPUS>|$CPUS|" application.yml
+  sed -i "s|<WD_PATH>|$WD_PATH|" application.yml
+  sed -i "s|<CLASSIFIER>|$CLASSIFIER|" application.yml
+  sed -i "s|<DATA>|$DATA|" application.yml
+
   cd $ROOT
 }
 
@@ -73,8 +76,9 @@ check_for_cargo
 check_for_docker
 check_for_mvn
 check_for_npm
+
 generate_config
 
-#start_application
+start_application
 
 
