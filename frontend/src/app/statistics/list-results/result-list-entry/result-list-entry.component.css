@@ -14,7 +14,8 @@
   background-color: #fff;
 }
 .box-wrapper {
-  transition: all .5s ease-in-out 0s;
+  transition: all .3s ease-in-out 0s;
+  position: relative;
 }
 
 .active {

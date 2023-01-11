@@ -29,7 +29,8 @@ export class ResultListEntryComponent implements OnInit, OnDestroy {
 
   delete() {
     this.box.nativeElement.style.transform = 'translateX(100%) rotateZ(45deg)';
-    setTimeout(()=> this.deleteEventEmitter.emit(),500);
+    this.box.nativeElement.style.zIndex = '5';
+    setTimeout(()=> this.deleteEventEmitter.emit(),300);
   }
   visualize() {
     this.visualizeEventEmitter.emit();
