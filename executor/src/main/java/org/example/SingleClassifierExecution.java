@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.example.execution.ExecutionService;
 import org.springframework.beans.factory.annotation.Value;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -13,10 +15,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SingleClassifierExecution implements Runnable{
 
-    @Value("working-directory-path")
-    private static String workingDirectoryPath;
-    @Value("classifier-path")
-    private static String classifierPath;
+
 
     private final Integer k;
     private final Double ratio;
@@ -28,14 +27,26 @@ public class SingleClassifierExecution implements Runnable{
 
 
     void classify() {
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                classifierPath,
-                dataPath,
-                "-k", k.toString(),
-                "-r", ratio.toString(),
-                "-a", algorithm.getValue()
-        );
-        processBuilder.directory(new File(workingDirectoryPath));
+        ProcessBuilder processBuilder;
+        if (multithreading) {
+            processBuilder = new ProcessBuilder(
+                    ExecutionService.classifierPath,
+                    dataPath,
+                    "-k", k.toString(),
+                    "-r", ratio.toString(),
+                    "-a", algorithm.getValue(),
+                    "-m"
+            );
+        } else {
+            processBuilder = new ProcessBuilder(
+                    ExecutionService.classifierPath,
+                    dataPath,
+                    "-k", k.toString(),
+                    "-r", ratio.toString(),
+                    "-a", algorithm.getValue()
+            );
+        }
+        processBuilder.directory(new File(ExecutionService.workingDirectoryPath));
         try {
             Process p = processBuilder.start();
             Utils.getOutput(

@@ -14,7 +14,8 @@ spring:
         format-sql: true
       show-sql: true
 
-thread-count: 7
-working-directory-path: "xd"
-classifier-path: "xd"
-data-folder: "test-data"
+config:
+  thread-count: 11
+  working-directory-path: "/home/czarek/Desktop/analiza-danych/classifier"
+  classifier-path: "/home/czarek/Desktop/analiza-danych/classifier/target/release/analiza-danych"
+  data-folder: "reuters"

@@ -7,4 +7,5 @@ public class ClassificationParameters {
     private Double ratio;
     private Integer k;
     private Algorithm algorithm;
+    private Boolean multithreading;
 }

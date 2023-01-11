@@ -18,21 +18,40 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ExecutionService {
 
-    @Value("thread-count")
-    private static int threadCount;
-    @Value("data-folder")
-    private static String dataFolder;
+    public static int threadCount;
+    public static String dataFolder;
+    public static String workingDirectoryPath;
+    public static String classifierPath;
+
+    @Value("${config.thread-count}")
+    public void setClassifierPath(int thread_count){
+        threadCount = thread_count;
+    }
+
+    @Value("${config.data-folder}")
+    public void setDataFolderPath(String data_folder){
+        dataFolder = data_folder;
+    }
+
+    @Value("${config.working-directory-path}")
+    public void setWorkingDirectoryPath(String working_directory_path){
+        workingDirectoryPath = working_directory_path;
+    }
+
+    @Value("${config.classifier-path}")
+    public void setClassifierPath(String classifier_path){
+        classifierPath = classifier_path;
+    }
 
     private final ResultRepository resultRepository;
 
     public Result executeSingleSimulation(ClassificationParameters params) {
-        System.out.println(params.getRatio());
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadCount);
         threadPoolExecutor.submit(new SingleClassifierExecution(
                 params.getK(),
                 params.getRatio(),
                 dataFolder,
-                false,
+                params.getMultithreading(),
                 params.getAlgorithm()
         ));
         threadPoolExecutor.shutdown();
