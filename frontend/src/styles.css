@@ -87,6 +87,7 @@ svg > g:first-child > rect {
   align-items: center;
   margin: 0 auto 0 auto;
   /*outline: 1px solid red;*/
+  transform: rotateZ(180deg);
 }
 
 .spinner::before{
@@ -97,7 +98,7 @@ svg > g:first-child > rect {
   border-radius: 50%;
   transform: rotateZ(45deg) translateY(200%);
   animation: spin;
-  animation-duration: 1.5s;
+  animation-duration: 1.2s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   animation-fill-mode: backwards;
@@ -105,6 +106,9 @@ svg > g:first-child > rect {
 
 @keyframes spin {
   0% {
+    transform: rotateZ(0deg) translateY(200%);
+  }
+  50% {
     transform: rotateZ(0deg) translateY(200%);
   }
   100% {
