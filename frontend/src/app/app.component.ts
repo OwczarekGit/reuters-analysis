@@ -20,8 +20,8 @@ export class AppComponent implements AfterViewInit{
     })
 
     this.navBox.nativeElement.addEventListener('mouseleave', (ev) => {
-      this.contentBox.nativeElement.style.width = 'calc( 100% - 54px )';
-      this.navBox.nativeElement.style.width = '54px';
+      this.contentBox.nativeElement.style.width = 'calc( 100% - 52px )';
+      this.navBox.nativeElement.style.width = '52px';
     })
 
   }
