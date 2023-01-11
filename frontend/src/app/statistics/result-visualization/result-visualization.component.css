@@ -1,5 +1,6 @@
 .not-ready {
   text-align: center;
+  gap: 6px;
 }
 
 .visualization{
@@ -38,7 +39,6 @@
 
 .summary-box{
   width: 100%;
-
 }
 
 .summary-line{
