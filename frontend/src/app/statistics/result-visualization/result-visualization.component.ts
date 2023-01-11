@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Result} from "../../shared/result";
 import {ChartType} from "angular-google-charts";
 import {VisualizationService} from "../../shared/visualization.service";

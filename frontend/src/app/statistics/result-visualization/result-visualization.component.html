@@ -3,13 +3,12 @@
     <p>Visualizing...</p>
     <div class="spinner"></div>
   </div>
-  <div *ngIf="visualizationService.singleClassificationVisualizationReady" class="visualization">
+  <div *ngIf="visualizationService.singleClassificationVisualizationReady" class="wrapper">
 
     <div class="box">
 
       <div class="summary">
-
-        <div class="summary-box flex flex-col">
+        <div class="summary-box wrapper">
           <p class="title">Result Visualization</p>
           <div class="summary-line"> <div>K:                 </div> {{result.k}}</div>
           <div class="summary-line"> <div>Ratio:             </div> {{result.splitRatio}}</div>
@@ -18,22 +17,18 @@
           <div class="summary-line"><div>Testing Slice Size: </div> {{result.testingSliceSize}}</div>
           <div class="summary-line"><div>Training Slice Size:</div> {{result.trainingSliceSize}}</div>
         </div>
-
-        <div>
+        <div class="wrapper flex">
           <google-chart
+            style="width: 100%; height: 100%"
             [type]="ratioChartType"
-            [width]="400/1"
-            [height]="400/1"
             title="Ratio: {{result.splitRatio}}"
             [data]="[['Training Size', result.trainingSliceSize],['Testing Size', result.testingSliceSize]]"
           ></google-chart>
         </div>
-
-        <div>
+        <div class="wrapper flex">
           <google-chart
+            style="width: 100%; height: 100%"
             [type]="ratioChartType"
-            [width]="400/1"
-            [height]="400/1"
             title="Accuracy: {{result.accuracy | percent}}"
             [data]="[
               ['Classified Correctly', (result.testingSliceSize * result.accuracy)],
@@ -45,9 +40,8 @@
 
       <div class="big-chart">
           <google-chart
-            style="width: 100%;"
+            style="width: 100%; height: 100%;"
             [type]="objectsChartType"
-            [height]="(400/1)"
             title="test"
             [options]="options"
             [data]="objectData"
