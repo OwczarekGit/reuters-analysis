@@ -38,23 +38,43 @@ check_for_npm(){
   print_green "NPM ok."
 }
 
+generate_config(){
+  sed --version > /dev/null || (print_red "Sed not available, cannot autogenerate application.yml config." && return)
+
+  cd "$EXECUTOR_DIR/src/main/resources"
+
+  print_blue "Generating config..."
+  CPUS=$(nproc)
+  WD_PATH="$ROOT/$CLASSIFIER_DIR"
+  CLASSIFIER="$ROOT/$CLASSIFIER_DIR/target/release/analiza-danych"
+  DATA="$ROOT/$CLASSIFIER_DIR/reuters"
+  sed -i 's/<CPUS>/$CPUS/' application.yml
+  sed -i 's/<WD_PATH>/$WD_PATH/' application.yml
+  sed -i 's/<DATA>/$DATA/' application.yml
+  cd $ROOT
+}
+
+start_application(){
+  print_blue "Building frontend..."
+  cd $FRONTEND_DIR && npm install && npm start &
+  cd $ROOT
+
+  print_blue "Building classifier..."
+  cd $CLASSIFIER_DIR && cargo build --release && cd $ROOT
+
+  print_blue "Starting docker..."
+  cd docker && docker-compose up -d && cd $ROOT
+
+  print_blue "Starting backend..."
+  cd $EXECUTOR_DIR && mvn package && mvn spring-boot:run
+}
+
 check_for_cargo
 check_for_docker
 check_for_mvn
 check_for_npm
+generate_config
 
-print_blue "Building frontend..."
-cd $FRONTEND_DIR && npm install && npm start &
-cd $ROOT
-
-print_blue "Building classifier..."
-cd $CLASSIFIER_DIR && cargo build --release && cd $ROOT
-
-print_blue "Starting docker..."
-cd docker && docker-compose up -d && cd $ROOT
-
-print_blue "Starting backend..."
-cd $EXECUTOR_DIR && mvn package && mvn spring-boot:run
-
+#start_application
 
 
