@@ -10,6 +10,11 @@ import { LightningIconComponent } from './lightning-icon/lightning-icon.componen
 import { Chart2IconComponent } from './chart2-icon/chart2-icon.component';
 import { TrashIconComponent } from './trash-icon/trash-icon.component';
 import { FlaskIconComponent } from './flask-icon/flask-icon.component';
+import { ArrowIconComponent } from './arrow-icon/arrow-icon.component';
+import { FloppyIconComponent } from './floppy-icon/floppy-icon.component';
+import { SettingsIconComponent } from './settings-icon/settings-icon.component';
+import { FolderIconComponent } from './folder-icon/folder-icon.component';
+import { UploadIconComponent } from './upload-icon/upload-icon.component';
 
 
 
@@ -24,7 +29,12 @@ import { FlaskIconComponent } from './flask-icon/flask-icon.component';
         LightningIconComponent,
         Chart2IconComponent,
         TrashIconComponent,
-        FlaskIconComponent
+        FlaskIconComponent,
+        ArrowIconComponent,
+        FloppyIconComponent,
+        SettingsIconComponent,
+        FolderIconComponent,
+        UploadIconComponent
     ],
   exports: [
     ChartIconComponent,
@@ -36,7 +46,12 @@ import { FlaskIconComponent } from './flask-icon/flask-icon.component';
     LightningIconComponent,
     Chart2IconComponent,
     TrashIconComponent,
-    FlaskIconComponent
+    FlaskIconComponent,
+    ArrowIconComponent,
+    FloppyIconComponent,
+    SettingsIconComponent,
+    FolderIconComponent,
+    UploadIconComponent
   ],
     imports: [
         CommonModule

@@ -1,0 +1,63 @@
+<div #box class="box-wrapper">
+  <div *ngIf="!active" class="box">
+    <div class="date-box flex">
+      <div>{{result.creationDate | date: "hh:mm" }}</div>
+      <div>{{result.creationDate | date: "dd.MM.YYYY " }}</div>
+    </div>
+
+    <div class="algorithm flex">
+      {{result.algorithm | lowercase}}
+    </div>
+
+    <div class="k flex">
+      <k-icon [active]="active"></k-icon>
+      {{result.k}}
+    </div>
+
+    <div class="ratio flex">
+      <div>{{(1.0 - result.splitRatio) | percent}}</div>
+      <span>/</span>
+      <div>{{result.splitRatio | percent}}</div>
+    </div>
+
+    <div class="accuracy">
+      <accuracy-icon [active]="active" ></accuracy-icon>
+      {{result.accuracy | percent:'1.2'}}
+    </div>
+    <div class="data-amount flex">
+      <flask-icon [active]="active" [fill]="result.splitRatio"></flask-icon>
+      {{result.testingSliceSize + result.trainingSliceSize}}
+    </div>
+  </div>
+
+  <div *ngIf="active" class="box active">
+    <div class="date-box flex active-date">
+      <div>{{result.creationDate | date: "hh:mm" }}</div>
+      <div>{{result.creationDate | date: "dd.MM.YYYY " }}</div>
+    </div>
+
+    <div class="algorithm flex green">
+      {{result.algorithm | lowercase}}
+    </div>
+
+    <div class="k flex">
+      <k-icon [active]="active"></k-icon>
+      {{result.k}}
+    </div>
+
+    <div class="ratio flex">
+      <div>{{(1.0 - result.splitRatio) | percent}}</div>
+      <span>/</span>
+      <div>{{result.splitRatio | percent}}</div>
+    </div>
+
+    <div class="accuracy">
+      <accuracy-icon [active]="active" ></accuracy-icon>
+      {{result.accuracy | percent:'1.2'}}
+    </div>
+    <div class="data-amount flex">
+      <flask-icon [active]="active" [fill]="result.splitRatio"></flask-icon>
+      {{result.testingSliceSize + result.trainingSliceSize}}
+    </div>
+  </div>
+</div>

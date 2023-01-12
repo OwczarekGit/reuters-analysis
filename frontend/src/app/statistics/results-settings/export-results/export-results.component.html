@@ -1,0 +1,16 @@
+<div class="wrapper">
+  <div class="result-list-title flex flex-row">
+    <p class="title">Export Results</p>
+    <floppy-icon (click)="exportSelectedResultsAsJson()"></floppy-icon>
+  </div>
+
+  <ul class="result-list">
+    <li *ngFor="let result of results; index as i" class="result-entry">
+      <app-export-result-entry
+        [result]="result"
+        (click)="setActive(i)"
+        [active]="isActive(i)"
+      ></app-export-result-entry>
+    </li>
+  </ul>
+</div>

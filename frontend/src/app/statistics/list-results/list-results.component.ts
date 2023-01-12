@@ -58,4 +58,8 @@ export class ListResultsComponent implements OnInit {
     }
 
   }
+
+  goToResultsSettings() {
+    this.router.navigate(["results-settings"]);
+  }
 }

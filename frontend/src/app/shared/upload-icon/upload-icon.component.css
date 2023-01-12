@@ -1,0 +1,132 @@
+.box{
+  border-radius: 6px;
+  border: 2px solid #ccc;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1px;
+  position: relative;
+  cursor: pointer;
+  transition: all .2s ease-in-out 0s;
+}
+
+.box * {
+  transition: all .2s ease-in-out 0s;
+}
+
+.box.active, .box:hover{
+  border: 2px solid #1a8840;
+}
+
+.cloud{
+  width: 24px;
+  height: 6px;
+  border-radius: 3px;
+  position: relative;
+  top: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ddd;
+}
+
+.circle{
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  position: absolute;
+  background-color: #ddd;
+}
+
+.circle:nth-child(1) {
+  width: 8px;
+  height: 8px;
+  bottom: 0px;
+  left: 0px;
+}
+
+.circle:nth-child(2) {
+  width: 12px;
+  height: 12px;
+  bottom: 1px;
+  left: 3px;
+}
+
+
+.circle:nth-child(3) {
+  width: 8px;
+  height: 8px;
+  bottom: 2px;
+  right: 4px;
+}
+.box:hover .cloud * , .box:hover .cloud,
+.box.active .cloud * , .box.active .cloud {
+  background-color: var(--google-blue);
+}
+
+.arrow{
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.line{
+  width: 4px;
+  height: 12px;
+  border-radius: 2px;
+  background-color: #aaa;
+  transform-origin: 2px 2px;
+  position: absolute;
+  bottom: -4px;
+}
+
+
+.line1{
+  transform: rotateZ(45deg);
+}
+
+.line2{
+  transform: rotateZ(-45deg);
+}
+
+.line3{
+  width: 4px;
+  height: 16px;
+  bottom: -11px;
+}
+
+.box.active .arrow *,
+.box:hover .arrow * {
+  background-color: var(--google-yellow);
+
+}
+
+.box.active .arrow,
+.box:hover .arrow{
+  animation-iteration-count: infinite;
+  animation-duration: 1s;
+  animation-name: xd;
+  animation-timing-function: ease-in-out;
+}
+
+
+@keyframes xd {
+  0%{
+    bottom: 16px;
+  }
+  50%{
+    bottom: 18px;
+  }
+  100%{
+    bottom: 16px;
+  }
+}
+
+

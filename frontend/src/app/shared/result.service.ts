@@ -32,4 +32,13 @@ export class ResultService {
       }
     );
   }
+
+  addNewResults(results: Result[]) {
+    this.http.post<Result[]>("api/result/import", results).subscribe(
+      (response) => {
+        this.results.push(...response);
+        this.resultsSubject.next(this.results);
+      }
+    )
+  }
 }

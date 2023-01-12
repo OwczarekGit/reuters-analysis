@@ -1,5 +1,5 @@
 export interface Result {
-  id: number;
+  id?: number;
   objectStatistics: ClassificationObjectStatistics[];
   k: number;
   splitRatio: number;
@@ -11,7 +11,7 @@ export interface Result {
 }
 
 export interface ClassificationObjectStatistics {
-  id: number;
+  id?: number;
   objectName: string;
   recall: number;
   fallout: number;

@@ -6,6 +6,10 @@ import {GoogleChartsModule} from "angular-google-charts";
 import { ListResultsComponent } from './list-results/list-results.component';
 import { MultipleResultVisualizationComponent } from './multiple-result-visualization/multiple-result-visualization.component';
 import { ResultListEntryComponent } from './list-results/result-list-entry/result-list-entry.component';
+import { ResultsSettingsComponent } from './results-settings/results-settings.component';
+import { ImportResultsComponent } from './results-settings/import-results/import-results.component';
+import { ExportResultsComponent } from './results-settings/export-results/export-results.component';
+import { ExportResultEntryComponent } from './results-settings/export-results/export-result-entry/export-result-entry.component';
 
 
 
@@ -14,7 +18,11 @@ import { ResultListEntryComponent } from './list-results/result-list-entry/resul
     ResultVisualizationComponent,
     ListResultsComponent,
     MultipleResultVisualizationComponent,
-    ResultListEntryComponent
+    ResultListEntryComponent,
+    ResultsSettingsComponent,
+    ImportResultsComponent,
+    ExportResultsComponent,
+    ExportResultEntryComponent
   ],
   exports: [
     ResultVisualizationComponent,

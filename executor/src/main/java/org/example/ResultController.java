@@ -22,4 +22,9 @@ public class ResultController {
     public void deleteResult(@PathVariable Long id) {
         this.resultRepository.deleteById(id);
     }
+
+    @PostMapping("import")
+    public List<Result> importResults(@RequestBody List<Result> results) {
+        return this.resultRepository.saveAll(results);
+    }
 }

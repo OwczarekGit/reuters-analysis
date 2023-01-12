@@ -1,0 +1,16 @@
+<div class="wrapper">
+  <div class="title-box flex flex-row">
+    <p class="title">Import Results</p>
+    <folder-icon  (click)="filesInput.click()"></folder-icon>
+    <upload-icon [hidden]="file == undefined" (click)="importResults()"></upload-icon>
+  </div>
+  <p [hidden]="file == undefined">Selected file: {{this.file?.name}}</p>
+  <input
+    #filesInput
+    hidden="false"
+    type="file"
+    onclick="this.value=null"
+    accept="application/json"
+    (change)="onChosenFileChange($event)"
+  />
+</div>

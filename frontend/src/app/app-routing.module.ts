@@ -6,11 +6,16 @@ import {ResultVisualizationComponent} from "./statistics/result-visualization/re
 import {
   MultipleResultVisualizationComponent
 } from "./statistics/multiple-result-visualization/multiple-result-visualization.component";
+import {ResultsSettingsComponent} from "./statistics/results-settings/results-settings.component";
 
 const routes: Routes = [
   {
     path: "results",
     component: ListResultsComponent
+  },
+  {
+    path: "results-settings",
+    component: ResultsSettingsComponent
   },
   {
     path: "execute",
