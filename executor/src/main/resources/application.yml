@@ -15,7 +15,7 @@ spring:
       show-sql: true
 
 config:
-  thread-count: 8
-  working-directory-path: "/home/kacper/Documents/reuters-analysis/classifier"
-  classifier-path: "/home/kacper/Documents/reuters-analysis/classifier/target/release/analiza-danych"
-  data-folder: "/home/kacper/Documents/reuters-analysis/classifier/test-data"
+  thread-count: <CPUS>
+  working-directory-path: "<WD_PATH>"
+  classifier-path: "<CLASSIFIER>"
+  data-folder: "<DATA>"
