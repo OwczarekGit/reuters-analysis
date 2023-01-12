@@ -41,4 +41,8 @@ export class ResultService {
       }
     )
   }
+
+  getResult(id: number): Result | undefined{
+    return this.results.find((res) => res.id == id);
+  }
 }

@@ -1,9 +1,9 @@
 <div class="wrapper">
-  <div *ngIf="!visualizationService.singleClassificationVisualizationReady" class="not-ready flex flex-col">
+  <div *ngIf="!ready" class="not-ready flex flex-col">
     <p>Visualizing...</p>
     <div class="spinner"></div>
   </div>
-  <div *ngIf="visualizationService.singleClassificationVisualizationReady" class="wrapper">
+  <div *ngIf="ready" class="wrapper">
 
     <div class="box">
 

@@ -84,4 +84,10 @@ export class ExportResultsComponent {
   isActive(i: number) {
     return this.selectedResults.includes(this.results[i]);
   }
+
+  exportAll() {
+    this.selectedResults = this.results;
+    this.exportSelectedResultsAsJson();
+    this.selectedResults = [];
+  }
 }

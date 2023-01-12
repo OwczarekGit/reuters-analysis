@@ -36,9 +36,10 @@ export class ListResultsComponent implements OnInit {
 
   visualizeResult(index: number) {
     this.visualizationService.markSingleVisualizationAsUnready();
-    this.router.navigate(["visualize"]);
+    let id: number | undefined = this.results[index].id
+    this.router.navigate(["/visualize", id]);
     this.navigationService.setActiveEntry(NavigationEntry.CLASSIFICATION_VISUALIZER);
-    this.visualizationService.setSingleClassificationData(this.results[index]);
+    this.visualizationService.setSingleClassificationDataId(id);
   }
 
   deleteResult(index: number) {

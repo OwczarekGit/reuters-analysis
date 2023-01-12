@@ -64,9 +64,9 @@ export class ExecuteClassificationComponent implements OnInit {
       response => {
         this.waitingForResponse = false;
         if(this.visualizeResult.value) {
-          this.visualizationService.setSingleClassificationData(response);
+          this.visualizationService.setSingleClassificationDataId(response.id);
           if(this.showResult.value) {
-            this.router.navigate(["visualize"]);
+            this.router.navigate(["visualize", response.id]);
             this.navigationService.setActiveEntry(NavigationEntry.CLASSIFICATION_VISUALIZER);
           }
         }

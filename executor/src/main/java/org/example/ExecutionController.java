@@ -18,4 +18,9 @@ public class ExecutionController {
         classificationParameters.setMultithreading(true);
         return service.executeSingleSimulation(classificationParameters);
     }
+    @PostMapping("planned")
+    public void executePlannedClassification() {
+        service.executeMultipleSimulations();
+    }
+
 }

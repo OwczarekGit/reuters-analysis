@@ -1,6 +1,7 @@
 import {AfterViewInit, Component} from '@angular/core';
 import {Router} from "@angular/router";
 import {NavigationEntry, NavigationService} from "../shared/navigation.service";
+import {VisualizationService} from "../shared/visualization.service";
 
 @Component({
   selector: 'app-navigation',
@@ -12,7 +13,7 @@ export class NavigationComponent implements AfterViewInit {
   activeEntry: NavigationEntry = NavigationEntry.NONE;
   enum = NavigationEntry;
 
-  constructor(private router: Router, private navigationService: NavigationService) {}
+  constructor(private router: Router, private navigationService: NavigationService, private visualizationService: VisualizationService) {}
 
   ngAfterViewInit(): void {
     this.navigationService.navigationEntryChangedSubject.subscribe(
@@ -36,7 +37,8 @@ export class NavigationComponent implements AfterViewInit {
   }
 
   classificationVisualizer() {
-    this.navigateToPath("visualize", NavigationEntry.CLASSIFICATION_VISUALIZER);
+    this.router.navigate(["visualize", this.visualizationService.singleClassificationDataId]);
+    this.navigationService.setActiveEntry(NavigationEntry.CLASSIFICATION_VISUALIZER);
   }
 
   isThisActiveEntry(path: string) {

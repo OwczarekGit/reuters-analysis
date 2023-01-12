@@ -64,7 +64,7 @@ public class ExecutionService {
 
     }
 
-    public void executeMultipleSimulations(List<ClassificationParameters> paramsList, String dataPath) {
+    public void executeMultipleSimulations() {
         TaskGenerationService taskGenerationService = new TaskGenerationService(
                 List.of(
                         3,
@@ -86,9 +86,9 @@ public class ExecutionService {
                         0.8
                 ),
                 List.of(
-                        Algorithm.MANHATTAN//,
-//                        Algorithm.CHEBYSHEV,
-//                        Algorithm.EUCLIDEAN
+                        Algorithm.MANHATTAN,
+                        Algorithm.CHEBYSHEV,
+                        Algorithm.EUCLIDEAN
                 ),
                 dataFolder
         );

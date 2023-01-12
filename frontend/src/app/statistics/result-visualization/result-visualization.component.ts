@@ -3,6 +3,8 @@ import {Result} from "../../shared/result";
 import {ChartType} from "angular-google-charts";
 import {VisualizationService} from "../../shared/visualization.service";
 import {NavigationEntry, NavigationService} from "../../shared/navigation.service";
+import {ResultService} from "../../shared/result.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-result-visualization',
@@ -29,16 +31,19 @@ export class ResultVisualizationComponent implements OnInit {
   ratioChartType: ChartType = ChartType.PieChart;
 
   objectData: any[][]=[];
+  ready: boolean = false;
 
-  constructor(public visualizationService: VisualizationService, private navigationService: NavigationService) {
+  constructor(route: ActivatedRoute, public resultService: ResultService, private navigationService: NavigationService) {
     this.navigationService.setActiveEntry(NavigationEntry.CLASSIFICATION_VISUALIZER);
-    this.visualizationService.singleClassificationDataReady.subscribe(
-      dataReady => {
-        this.result = visualizationService.singleClassificationData;
+    let id: string | null = route.snapshot.paramMap.get("id");
+    if(id != null) {
+      let res = this.resultService.getResult(+id);
+      if(res != undefined) {
+        this.result = res;
         this.getRows();
-        this.visualizationService.markSingleVisualizationAsReady();
+        this.ready = true;
       }
-    )
+    }
   }
 
   ngOnInit(): void {

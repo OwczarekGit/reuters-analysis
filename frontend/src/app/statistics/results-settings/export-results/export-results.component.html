@@ -2,6 +2,7 @@
   <div class="result-list-title flex flex-row">
     <p class="title">Export Results</p>
     <floppy-icon (click)="exportSelectedResultsAsJson()"></floppy-icon>
+    <empty-icon (click)="exportAll()"></empty-icon>
   </div>
 
   <ul class="result-list">

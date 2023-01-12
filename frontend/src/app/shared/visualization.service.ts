@@ -10,7 +10,7 @@ export class VisualizationService {
   singleClassificationVisualizationReady: boolean;
   multipleClassificationVisualizationReady: boolean;
 
-  singleClassificationData!: Result;
+  singleClassificationDataId: number | undefined;
   multipleClassificationData!: Result[];
 
   singleClassificationDataReady: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -19,11 +19,6 @@ export class VisualizationService {
   constructor() {
     this.singleClassificationVisualizationReady = false;
     this.multipleClassificationVisualizationReady = false;
-  }
-
-  setSingleClassificationData(data: Result) {
-    this.singleClassificationData = data;
-    this.singleClassificationDataReady.next(true);
   }
   setMultipleClassificationData(data: Result[]) {
     this.multipleClassificationData = data;
@@ -43,5 +38,9 @@ export class VisualizationService {
 
   markMultipleVisualizationAsReady() {
     this.multipleClassificationVisualizationReady = true;
+  }
+
+  setSingleClassificationDataId(id: number | undefined) {
+    this.singleClassificationDataId =  id;
   }
 }

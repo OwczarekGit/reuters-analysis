@@ -22,7 +22,7 @@ const routes: Routes = [
     component: ExecuteClassificationComponent
   },
   {
-    path: "visualize",
+    path: "visualize/:id",
     component: ResultVisualizationComponent
   },
   {
