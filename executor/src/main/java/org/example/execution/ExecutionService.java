@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -127,7 +128,6 @@ public class ExecutionService {
             result.setTestingSliceSize(resultDto.getTesting_slice_size());
             result.setTrainingSliceSize(resultDto.getTraining_slice_size());
             result.setCreationDate(LocalDateTime.now());
-            ResultService.getResults().clear();
             resultRepository.save(result);
         });
     }
