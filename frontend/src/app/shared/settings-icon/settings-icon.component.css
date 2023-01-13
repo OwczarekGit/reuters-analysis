@@ -55,7 +55,7 @@
 .knob{
   background-color: #ccc;
   width: 5px;
-  height: 3px;
+  height: 4px;
   position: absolute;
   border-top-right-radius: 1px;
   border-top-left-radius: 1px;
